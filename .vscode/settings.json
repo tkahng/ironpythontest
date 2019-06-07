@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "C:\\Users\\인시공현장PC\\AppData\\Local\\Programs\\Python\\Python37\\python.exe",
+    "python.autoComplete.extraPaths": ["D:\\GitHub\\ironpython-stubs\\release\\stubs.min"],
+    "python.linting.enabled": false
+}
