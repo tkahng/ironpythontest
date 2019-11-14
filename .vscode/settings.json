@@ -1,9 +1,8 @@
 {
-    "python.pythonPath": "C:\\Users\\인시공현장PC\\AppData\\Local\\Programs\\Python\\Python37\\python.exe",
+    "python.pythonPath": "C:\\Python27amd64\\python.exe",
     "python.linting.enabled": false,
     // python autocomplete extra path
-    "python.autoComplete.extraPaths": [
-        "D:\\GitHub\\ironpython-stubs\\release\\stubs.min"],
+    "python.autoComplete.extraPaths": ["D:\\GitHub\\ironpython-stubs\\release\\stubs.min", "E:\\GitHub\\ironpython-stubs\\release\\stubs.min"],
 
     // enable new language server. THIS IS EXTREMELY IMPORTANT TO HAVE FAST AUTOCOMPLETE!!
     "python.jediEnabled": false,
