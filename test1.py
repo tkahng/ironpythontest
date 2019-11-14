@@ -1,8 +1,8 @@
 import clr
-clr.AddReference('ProtoGeometry')
-from Autodesk.DesignScript.Geometry import *
-from Rhino import *
-rhino.C
+# clr.AddReference('ProtoGeometry')
+# from Autodesk.DesignScript.Geometry import *
 
+clr.AddReference('RhinoCommon')
 
-Rhino.Collections
+import Rhino
+
