@@ -3,8 +3,7 @@ import clr
 # Import RevitAPI Classes
 clr.AddReference("RevitAPI")
 from Autodesk.Revit.DB import *
-# As explained in the previous section, replace * with the class you need separated
-by comma.
+# As explained in the previous section, replace * with the class you need separatedby comma.
 clr.AddReference("RevitNodes")
 import Revit
 # Adds ToDSType (bool) extension method to Wrapped elements
