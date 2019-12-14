@@ -3,13 +3,12 @@ import rhinoscriptsyntax as rs
 obj = rs.GetObject("Select a srf", rs.filter.surface)
 # obj = rs.GetObject("Select object", rs.filter.surface + rs.filter.polysurface)
 
-interval = rs.GetReal("interval", 1)
+intervalx = rs.GetReal("intervalx", 1)
+intervaly = rs.GetReal("intervaly", 2.4)
 Secx = rs.GetReal("mullion width", 0.15) 
 Secy = rs.GetReal("mullion depth", 0.05) 
 domainU = rs.SurfaceDomain(obj, 0)
 domainV = rs.SurfaceDomain(obj, 1)
-
-sweeps = []
 
 vec1 = (-Secx/2, 0, 0)
 vec2 = (-Secx/2, -Secx/2, 0)
@@ -28,16 +27,33 @@ def sweepSec(crv, vec):
     if crv: rs.DeleteObjects(crv)
     return sweep
 
-bndry = rs.DuplicateSurfaceBorder(obj, type=1)
-frame = sweepSec(bndry, vec1)
+def intframe(domain, srf, interval):
+    i = interval   
+    sweeps = []
+    while i < domain[1]:
+        point = rs.EvaluateSurface(srf, i, 0)
+        parameter = rs.SurfaceClosestPoint(srf, point)
+        crv = rs.ExtractIsoCurve( srf, parameter, 1)
+        sweeps.append(sweepSec(crv, vec2))
+        i = i+interval  
+    return sweeps
 
-i = interval   
+def intframe2(domain, srf, interval):
+    i = interval   
+    sweeps = []
+    while i < domain[1]:
+        point = rs.EvaluateSurface(srf, 0, i)
+        parameter = rs.SurfaceClosestPoint(srf, point)
+        crv = rs.ExtractIsoCurve( srf, parameter, 0)
+        sweeps.append(sweepSec(crv, vec2))
+        i = i+interval  
+    return sweeps
 
-while i < domainU[1]:
-    point = rs.EvaluateSurface(obj, i, 0)
-    parameter = rs.SurfaceClosestPoint(obj, point)
-    crv = rs.ExtractIsoCurve( obj, parameter, 1)
-    sweeps.append(sweepSec(crv, vec2))
-    i = i+interval  
+def extframe(srf):
+    bndry = rs.DuplicateSurfaceBorder(srf, type=1)
+    frame = sweepSec(bndry, vec1)
+    return frame
 
-
+intframes1 = intframe(domainU, obj, intervalx)
+intframes2 = intframe2(domainV, obj, intervaly)
+extframes = extframe(obj)
