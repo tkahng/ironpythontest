@@ -6,6 +6,10 @@ obj = rs.GetObject("Select a srf", rs.filter.surface)
 
 interval = rs.GetReal("interval", 1)
 
+Secx = rs.GetReal("mullion width", 1) 
+
+Secy = rs.GetReal("mullion depth", 1) 
+
 domainU = rs.SurfaceDomain(obj, 0)
 domainV = rs.SurfaceDomain(obj, 1)
 
@@ -30,7 +34,7 @@ while i < domainU[1]:
 
     plane = rs.CurvePerpFrame(crv, 0)
     planept = rs.EvaluatePlane(plane, (0,0))
-    rect = rs.AddRectangle( plane, 0.1, 0.1 )
+    rect = rs.AddRectangle( plane, Secx, Secy )
     cen = rs.CurveAreaCentroid(rect)
     vec = planept - cen[0]
     # rs.MoveObjects(rect, vec)
@@ -45,6 +49,10 @@ print shapes
 
 for j in range(len(rails)):
     rs.AddSweep1(rails[j],shapes[j])
+
+if rails: rs.DeleteObjects(rails)
+
+if shapes: rs.DeleteObjects(shapes)
 
 # for rail in rails:
 #     # rail = rails[i]
