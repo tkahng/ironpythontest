@@ -7,8 +7,6 @@ intervalx = rs.GetReal("intervalx", 1)
 intervaly = rs.GetReal("intervaly", 2)
 Secx = rs.GetReal("mullion width", 0.15) 
 Secy = rs.GetReal("mullion depth", 0.05) 
-# domainU = rs.SurfaceDomain(obj, 0)
-# domainV = rs.SurfaceDomain(obj, 1)
 
 vec1 = (-Secx/2, -Secy, 0)
 vec2 = (-Secx/2, -Secy/2, 0)
@@ -21,15 +19,12 @@ def profile(plane, vec):
     cob_inverse = rs.XformChangeBasis(plane, rs.WorldXYPlane())
     temp = rs.XformMultiply(xform, cob)
     xform2 = rs.XformMultiply(cob_inverse, temp)
-
-    rect = rs.TransformObjects( rect, xform2, True )
-    return rect
+    rect2 = rs.TransformObjects( rect, xform2, True )
+    if rect: rs.DeleteObjects(rect)
+    return rect2
 
 def sweepSec(crv, plane, vec):
-    # plane = rs.CurvePerpFrame(crv, 0)
-    # plane = rs.PlaneFromNormal(origin, normal)
-    # plane = rs.CurveFrame(crv, 0)
-    rs.AddPlaneSurface( plane, 1, 1 )
+    # rs.AddPlaneSurface( plane, 1, 1 )
     rect = profile(plane, vec)
     sweep = rs.AddSweep1(crv, rect, closed=True)
     sweep = rs.CapPlanarHoles(sweep)
@@ -72,10 +67,8 @@ def isoframe(srf, uv, spacing):
         point = rs.EvaluateSurface(srf, i[0], i[1])
         parameter = rs.SurfaceClosestPoint(srf, point)
         plane = rs.SurfaceFrame(srf, parameter)
-        # plane = rs.PlaneFromFrame( plane.Origin, plane.XAxis, plane.ZAxis)
         crv = rs.ExtractIsoCurve( srf, parameter, flipBool(uv))
         direction = rs.CurveTangent(crv, 0)
-        # xaxis = rs.VectorCrossProduct(direction, plane.ZAxis)
         newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
         sweeps.append(sweepSec(crv, newplane, vec2))
 
@@ -90,6 +83,7 @@ def extframe(srf):
     direction = rs.CurveTangent(crv, 0)
     newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
     frame = sweepSec(crv, newplane, vec1)
+    if crv: rs.DeleteObjects(crv)
 
     return frame
 
