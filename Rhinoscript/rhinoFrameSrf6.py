@@ -1,6 +1,6 @@
 import rhinoscriptsyntax as rs
 
-obj = rs.GetObject("Select a srf", rs.filter.surface)
+obj = rs.GetObjects("Select a srf", rs.filter.surface)
 # obj = rs.GetObject("Select object", rs.filter.surface + rs.filter.polysurface)
 
 intervalx = rs.GetReal("intervalx", 1)
@@ -35,20 +35,20 @@ def sweepSec(crv, plane, vec):
 def flipBool(tf):
     return abs(tf-1)
 
-def intervals(uv, spacing):
+def intervals(srf, uv, spacing):
     domains = []
-    domain = rs.SurfaceDomain(obj, uv)
+    domain = rs.SurfaceDomain(srf, uv)
     i = spacing
     while i < domain[1]:
         domains.append(i)
         i = i+spacing
     return domains
 
-def intervalpts(uv, spacing):
+def intervalpts(srf, uv, spacing):
 
-    spacings = intervals(uv, spacing)
+    spacings = intervals(srf, uv, spacing)
     ptlist = []
-
+    
     for i in spacings:
         coord = []
         coord.append(i)
@@ -59,7 +59,7 @@ def intervalpts(uv, spacing):
 
 def isoframe(srf, uv, spacing):
 
-    points = intervalpts(uv, spacing)
+    points = intervalpts(srf, uv, spacing)
     print points
     sweeps = []
     
@@ -87,6 +87,20 @@ def extframe(srf):
 
     return frame
 
-intframes1 = isoframe(obj, 0, intervalx)
-intframes2 = isoframe(obj, 1, intervaly)
-extframes = extframe(obj)
+def frameall(srf):
+    frames = []
+    frames.append(isoframe(srf, 0, intervalx))
+    frames.append(isoframe(srf, 1, intervaly))
+    frames.append(extframe(srf))
+    return frames
+
+def framemulti(srfs):
+    frames = []
+
+    for srf in srfs:
+        frames.append(frameall(srf))
+    
+    return frames
+    
+
+framemulti(obj)
