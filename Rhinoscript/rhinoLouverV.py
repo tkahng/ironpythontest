@@ -14,32 +14,12 @@ vec2 = (-Secx/2, -Secy/2, 0)
 vec3 = (-louverW/2, -louverW/2, 0)
 
 def profile2(plane, vec):
-
+    rs.ViewCPlane(None, plane)
     sec = rs.AddLine((0,0,0), (louverW,0,0))
-    sec = rs.RotateObject(sec, rs.WorldXYPlane().Origin, 45.0, rs.WorldXYPlane().ZAxis, copy=False)
-    # rect = rs.MoveObjects(rect, vec)  
-    # xform = rs.XformRotation(45.0, plane.Zaxis, plane.Origin)
-    xform = rs.XformTranslation(vec)
-    cob = rs.XformChangeBasis(plane, rs.WorldXYPlane())
-    cob_inverse = rs.XformChangeBasis(plane, rs.WorldXYPlane())
-    temp = rs.XformMultiply(xform, cob)
-    xform2 = rs.XformMultiply(cob_inverse, temp)
-    sec2 = rs.TransformObjects( sec, temp, True )
-    if sec: rs.DeleteObjects(sec)
-    return sec2
+    sec = rs.RotateObject(sec, plane.Origin, 45.0, plane.ZAxis, copy=True)
 
-
-def profile1(plane, vec):
-    rect = rs.AddRectangle( plane, Secx, Secy )
-    # rect = rs.MoveObjects(rect, vec)  
-    xform = rs.XformTranslation(vec)
-    cob = rs.XformChangeBasis(rs.WorldXYPlane(), plane)
-    cob_inverse = rs.XformChangeBasis(plane, rs.WorldXYPlane())
-    temp = rs.XformMultiply(xform, cob)
-    xform2 = rs.XformMultiply(cob_inverse, temp)
-    rect2 = rs.TransformObjects( rect, xform2, True )
-    if rect: rs.DeleteObjects(rect)
-    return rect2
+    # if sec: rs.DeleteObjects(sec)
+    return sec
 
 def sweepSec(crv, plane, vec):
     # rs.AddPlaneSurface( plane, 1, 1 )
@@ -92,37 +72,11 @@ def isoframe(srf, uv, spacing, vec):
 
     return sweeps    
 
-def extframe(srf):
 
-    crv = rs.DuplicateSurfaceBorder(srf, type=1)
-    point = rs.EvaluateCurve(crv, 0)
-    parameter = rs.SurfaceClosestPoint(srf, point)
-    plane = rs.SurfaceFrame(srf, parameter)
-    direction = rs.CurveTangent(crv, 0)
-    newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
-    frame = sweepSec(crv, newplane, vec1)
-    if crv: rs.DeleteObjects(crv)
-
-    return frame
 
 def framelouver(srf):
     frames = []
     frames.append(isoframe(srf, 0, intervalx, vec3))
-    return frames
-    
-def frameall(srf):
-    frames = []
-    frames.append(isoframe(srf, 0, intervalx, vec2))
-    frames.append(isoframe(srf, 1, intervaly, vec2))
-    frames.append(extframe(srf))
-    return frames
-
-def framemulti(srfs):
-    frames = []
-
-    for srf in srfs:
-        frames.append(frameall(srf))
-    
     return frames
     
 
