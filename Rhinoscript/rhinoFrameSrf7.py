@@ -42,24 +42,19 @@ def intervals(srf, uv, spacing):
     return domains
 
 def intervalpts(srf, uv, spacing):
-
     spacings = intervals(srf, uv, spacing)
     ptlist = []
-    
     for i in spacings:
         coord = []
         coord.append(i)
         coord.insert(flipBool(uv), 0)
         ptlist.append(coord)   
-
     return ptlist
 
 def isoframe(srf, uv, spacing, vec):
-
     points = intervalpts(srf, uv, spacing)
-    print points
+    # print points
     sweeps = []
-    
     for i in points:
         point = rs.EvaluateSurface(srf, i[0], i[1])
         parameter = rs.SurfaceClosestPoint(srf, point)
@@ -68,11 +63,9 @@ def isoframe(srf, uv, spacing, vec):
         direction = rs.CurveTangent(crv, 0)
         newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
         sweeps.append(sweepSec(crv, newplane, vec))
-
     return sweeps    
 
 def extframe(srf):
-
     crv = rs.DuplicateSurfaceBorder(srf, type=1)
     point = rs.EvaluateCurve(crv, 0)
     parameter = rs.SurfaceClosestPoint(srf, point)
@@ -81,7 +74,6 @@ def extframe(srf):
     newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
     frame = sweepSec(crv, newplane, vec1)
     if crv: rs.DeleteObjects(crv)
-
     return frame
 
 def framelouver(srf):
@@ -91,18 +83,23 @@ def framelouver(srf):
     
 def frameall(srf):
     frames = []
-    frames.append(isoframe(srf, 0, intervalx, vec2))
-    frames.append(isoframe(srf, 1, intervaly, vec2))
-    frames.append(extframe(srf))
+    framesv = isoframe(srf, 0, intervalx, vec2)
+    framesh = isoframe(srf, 1, intervaly, vec2)
+    frameso = extframe(srf)
+
+    frames.append(rs.BooleanDifference(framesh, framesv))
+
     return frames
 
 def framemulti(srfs):
     frames = []
-
     for srf in srfs:
         frames.append(frameall(srf))
-    
+        # frames.append(isoframe(srf, 0, intervalx, vec2))
+        # frames.append(isoframe(srf, 1, intervaly, vec2))
+        # frames.append(extframe(srf))
     return frames
     
+if __name__ == '__main__':
+    framemulti(obj)
 
-framemulti(obj)
