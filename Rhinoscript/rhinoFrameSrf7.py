@@ -1,5 +1,11 @@
 import rhinoscriptsyntax as rs
 
+# items = ("Lights", "Off", "On"), ("Cameras", "Disabled", "Enabled"), ("Action", "False", "True")
+
+# results = rs.GetBoolean("Boolean options", items, (True, True, True) )
+# if results:
+#     for val in results: print val
+
 obj = rs.GetObjects("Select a srf", rs.filter.surface)
 
 intervalx = rs.GetReal("intervalx", 1)
@@ -59,7 +65,7 @@ def isoframe(srf, uv, spacing, vec):
         point = rs.EvaluateSurface(srf, i[0], i[1])
         parameter = rs.SurfaceClosestPoint(srf, point)
         plane = rs.SurfaceFrame(srf, parameter)
-        crv = rs.ExtractIsoCurve( srf, parameter, flipBool(uv))
+        crv = rs.ExtractIsoCurve(srf, parameter, flipBool(uv))
         direction = rs.CurveTangent(crv, 0)
         newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
         sweeps.append(sweepSec(crv, newplane, vec))
@@ -81,23 +87,21 @@ def framelouver(srf):
     frames.append(isoframe(srf, 0, intervalx, vec3))
     return frames
     
-def frameall(srf):
-    frames = []
-    framesv = isoframe(srf, 0, intervalx, vec2)
-    framesh = isoframe(srf, 1, intervaly, vec2)
-    frameso = extframe(srf)
-
-    frames.append(rs.BooleanDifference(framesh, framesv))
-
-    return frames
+# def frameall(srf):
+#     frames = []
+#     framesv = isoframe(srf, 0, intervalx, vec2)
+#     framesh = isoframe(srf, 1, intervaly, vec2)
+#     frameso = extframe(srf)
+#     frames.append(rs.BooleanDifference(framesh, framesv))
+#     return frames
 
 def framemulti(srfs):
     frames = []
     for srf in srfs:
-        frames.append(frameall(srf))
-        # frames.append(isoframe(srf, 0, intervalx, vec2))
-        # frames.append(isoframe(srf, 1, intervaly, vec2))
-        # frames.append(extframe(srf))
+        # frames.append(frameall(srf))
+        frames.append(isoframe(srf, 0, intervalx, vec2))
+        frames.append(isoframe(srf, 1, intervaly, vec2))
+        frames.append(extframe(srf))
     return frames
     
 if __name__ == '__main__':
