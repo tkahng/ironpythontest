@@ -22,9 +22,10 @@ def offsetBothCrvs(crvs, width):
 #         rs.SelectObjects(objs)
 
 def addRail(obj):
-    vec = rs.CreateVector(0, 0, 4)
     point1 = rs.EvaluateCurve(obj, 0)
-    point2 = rs.MoveObject(obj, vec)
+    vec = rs.CreateVector(0, 0, 4)
+    matrix = rs.XformTranslation(vec)
+    point2 = rs.MoveObjects(point1, vec)
     return rs.AddLine(point1, point2)
 
 def makeWall(crvs, width):
@@ -33,7 +34,7 @@ def makeWall(crvs, width):
     for crv in crvs:
         inputsrf = offsetBothCrvs(crv, width)
         railCurve = addRail(crv)
-        brep = rs.ExtrudeSurface(surface, curve)
+        brep = rs.ExtrudeSurface(inputsrf, crvs)
         breps.append(brep)
     return breps
 
