@@ -8,11 +8,21 @@ plane = rs.ViewCPlane()
 # rs.ExtrudeSurface(surface, curve)
 
 def offsetBothCrvs(crvs, width):
+    lofts = []
     loftCrvs = []
-    if rs.IsCurve(crvs): 
-        loftCrvs.append(rs.OffsetCurve( crvs, [0,0,0], width/2))
-        loftCrvs.append(rs.OffsetCurve( crvs, [0,0,0], -width/2))
-    return rs.AddLoftSrf(loftCrvs)
+    # if rs.IsCurve(crvs):
+    offsets = [] 
+    offsets.append(rs.OffsetCurve( crvs, [0,0,0], width/2))
+    offsets.append(rs.OffsetCurve( crvs, [0,0,0], -width/2))
+    # for i in offsets:
+
+        
+    section = rs.AddLoftSrf(offsets,loft_type=2)
+    if rs.IsPolysurface(section):
+        lofts.append(rs.ExplodePolysurfaces(section))
+    else:
+        lofts.append(section)
+    return lofts
     # if loftCrvs: rs.DeleteObjects(reloftCrvs)
 
 # def returnSelection():
@@ -25,16 +35,17 @@ def addRail(obj):
     point1 = rs.EvaluateCurve(obj, 0)
     vec = rs.CreateVector(0, 0, 4)
     matrix = rs.XformTranslation(vec)
-    point2 = rs.MoveObjects(point1, vec)
+    point2 = rs.CopyObject(point1, vec)
     return rs.AddLine(point1, point2)
+
 
 def makeWall(crvs, width):
     # if crvs:
     breps = []
     for crv in crvs:
-        inputsrf = offsetBothCrvs(crv, width)
         railCurve = addRail(crv)
-        brep = rs.ExtrudeSurface(inputsrf, crvs)
+        shape = offsetBothCrvs(crv, width)
+        brep = rs.ExtrudeSurface(shape, railCurve)
         breps.append(brep)
     return breps
 
