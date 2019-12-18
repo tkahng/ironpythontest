@@ -6,6 +6,13 @@ plane = rs.ViewCPlane()
 # curve = rs.AddLine((5,0,0), (10,0,10))
 # surface = rs.AddSrfPt([(0,0,0), (5,0,0), (5,5,0), (0,5,0)])
 # rs.ExtrudeSurface(surface, curve)
+# def flatten(l):
+#     for el in l:
+#         if isinstance(el, collections.Iterable) and not isinstance(el, basestring):
+#             for sub in flatten(el):
+#                 yield sub
+#         else:
+#             yield el
 
 def offsetBothCrvs(crvs, width):
     loftCrvs = []

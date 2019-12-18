@@ -8,22 +8,11 @@ plane = rs.ViewCPlane()
 # rs.ExtrudeSurface(surface, curve)
 
 def offsetBothCrvs(crvs, width):
-    lofts = []
-    loftCrvs = []
-    # if rs.IsCurve(crvs):
     offsets = [] 
     offsets.append(rs.OffsetCurve( crvs, [0,0,0], width/2))
     offsets.append(rs.OffsetCurve( crvs, [0,0,0], -width/2))
-    # for i in offsets:
-
-        
     section = rs.AddLoftSrf(offsets,loft_type=2)
-    if rs.IsPolysurface(section):
-        lofts.append(rs.ExplodePolysurfaces(section))
-    else:
-        lofts.append(section)
-    return lofts
-    # if loftCrvs: rs.DeleteObjects(reloftCrvs)
+    return section
 
 # def returnSelection():
 #     objs = rs.LastCreatedObjects()
@@ -32,21 +21,28 @@ def offsetBothCrvs(crvs, width):
 #         rs.SelectObjects(objs)
 
 def addRail(obj):
-    point1 = rs.EvaluateCurve(obj, 0)
+    point1 = rs.EvaluateSurface(obj, 0, 0)
     vec = rs.CreateVector(0, 0, 4)
-    matrix = rs.XformTranslation(vec)
     point2 = rs.CopyObject(point1, vec)
     return rs.AddLine(point1, point2)
 
-
 def makeWall(crvs, width):
-    # if crvs:
     breps = []
+    shapes = []
+
     for crv in crvs:
-        railCurve = addRail(crv)
         shape = offsetBothCrvs(crv, width)
-        brep = rs.ExtrudeSurface(shape, railCurve)
-        breps.append(brep)
+        if rs.IsPolysurface(shape):
+            surfs =rs.ExplodePolysurfaces(shape)
+            for surf in surfs:
+                shapes.append(surf)
+        else:
+            shapes.append(shape)
+
+    for shape in shapes:
+        railCurve = addRail(shape)
+        breps.append(rs.ExtrudeSurface(shape, railCurve))
+        
     return breps
 
 makeWall(objs, width)
