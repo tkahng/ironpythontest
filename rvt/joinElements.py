@@ -31,7 +31,7 @@ def joinmulti(elems):
     for x in elems:
         for y in elems:
             try:
-                JoinGeometryUtils.JoinGeometry(doc,x,y)
+                JoinGeometryUtils.JoinGeometry(doc,doc.GetElement(x),doc.GetElement(y))
             except:
                 pass
 
