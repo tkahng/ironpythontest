@@ -17,7 +17,10 @@ def addRail(obj):
     point1 = rs.EvaluateSurface(obj, 0, 0)
     vec = rs.CreateVector(0, 0, height)
     point2 = rs.CopyObject(point1, vec)
-    return rs.AddLine(point1, point2)
+    line = rs.AddLine(point1, point2)
+    # if point1: rs.DeleteObjects(point1)
+    if point2: rs.DeleteObjects(point2)
+    return line
 
 def makeWall(crvs, width):
     breps = []
@@ -35,7 +38,9 @@ def makeWall(crvs, width):
     for shape in shapes:
         railCurve = addRail(shape)
         breps.append(rs.ExtrudeSurface(shape, railCurve))
-        
+        if railCurve: rs.DeleteObjects(railCurve)
+
+    if shapes: rs.DeleteObjects(shapes)
     return breps
 
 makeWall(objs, width)
