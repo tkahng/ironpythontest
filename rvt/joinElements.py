@@ -27,12 +27,13 @@ walls = UnwrapElement(IN[0])
 
 TransactionManager.Instance.EnsureInTransaction(doc)
 
-for x in walls:
-	for y in walls:
-		try:
-			JoinGeometryUtils.JoinGeometry(doc,x,y)
-		except:
-			pass
+def joinmulti(elems):
+    for x in elems:
+        for y in elems:
+            try:
+                JoinGeometryUtils.JoinGeometry(doc,x,y)
+            except:
+                pass
 
 TransactionManager.Instance.TransactionTaskDone()
 
