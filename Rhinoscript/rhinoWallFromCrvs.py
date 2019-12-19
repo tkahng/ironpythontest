@@ -23,6 +23,7 @@ def addRail(obj):
     return line
 
 def makeWall(crvs, width):
+    rs.EnableRedraw(False)
     breps = []
     shapes = []
 
@@ -41,6 +42,7 @@ def makeWall(crvs, width):
         if railCurve: rs.DeleteObjects(railCurve)
 
     if shapes: rs.DeleteObjects(shapes)
+    rs.EnableRedraw(False)
     return breps
 
 makeWall(objs, width)

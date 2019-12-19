@@ -1,41 +1,88 @@
 import rhinoscriptsyntax as rs
 
-# obj = rs.GetObject("Select a srf", rs.filter.surface)
+obj = rs.GetObjects("Select a srf", rs.filter.surface)
 
-obj = rs.GetObject("Select object", rs.filter.surface + rs.filter.polysurface)
-# startpoint = rs.GetPoint("Base point of center line")
-# endpoint = rs.GetPoint("Endpoint of center line", startpoint)
-# contours = rs.AddSrfContourCrvs( obj, (startpoint, endpoint) )
+intervalx = rs.GetReal("intervalx", 1)
+intervaly = rs.GetReal("intervaly", 2)
+Secx = rs.GetReal("mullion width", 0.15) 
+Secy = rs.GetReal("mullion depth", 0.05) 
 
-interval = rs.GetReal("interval", 1.0)
+vec1 = (-Secx/2, -Secy, 0)
+vec2 = (-Secx/2, -Secy/2, 0)
 
-# if rs.IsSurface(obj):
-#     sd
+def rectFrame():
+    return rs.AddRectangle(rs.WorldXYPlane(), Secx, Secy )
 
-domainU = rs.SurfaceDomain(obj, 0)
-domainV = rs.SurfaceDomain(obj, 1)
+def profileXform(sec, plane, vec):
+    xvec = rs.XformTranslation(vec)
+    cob = rs.XformChangeBasis(plane, rs.WorldXYPlane())
+    xform = rs.XformMultiply(cob, xvec)
+    return rs.TransformObjects(sec, xform, False)
 
-evalpt = []
+def sweepSec(crv, plane, vec):
+    rect = profileXform(rectFrame(), plane, vec)
+    sweep = rs.AddSweep1(crv, rect, closed=True)
+    sweep = rs.CapPlanarHoles(sweep)
+    if rect: rs.DeleteObjects(rect)
+    if crv: rs.DeleteObjects(crv)
+    return sweep
 
-while i < domainU:
-    pt = i+interval
+def flipBool(tf):
+    return abs(tf-1)
+
+def intervals(srf, uv, spacing):
+    domains = []
+    domain = rs.SurfaceDomain(srf, uv)
+    i = spacing
+    while i < domain[1]:
+        domains.append(i)
+        i = i+spacing
+    return domains
+
+def intervalpts(srf, uv, spacing):
+    spacings = intervals(srf, uv, spacing)
+    ptlist = []
+    for i in spacings:
+        coord = []
+        coord.append(i)
+        coord.insert(flipBool(uv), 0)
+        ptlist.append(coord)   
+    return ptlist
+
+def isoframe(srf, uv, spacing, vec):
+    points = intervalpts(srf, uv, spacing)
+    sweeps = []
+    for i in points:
+        point = rs.EvaluateSurface(srf, i[0], i[1])
+        parameter = rs.SurfaceClosestPoint(srf, point)
+        plane = rs.SurfaceFrame(srf, parameter)
+        crv = rs.ExtractIsoCurve(srf, parameter, flipBool(uv))
+        direction = rs.CurveTangent(crv, 0)
+        newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
+        sweeps.append(sweepSec(crv, newplane, vec))
+    return sweeps    
+
+def extframe(srf):
+    crv = rs.DuplicateSurfaceBorder(srf, type=1)
+    point = rs.EvaluateCurve(crv, 0)
+    parameter = rs.SurfaceClosestPoint(srf, point)
+    plane = rs.SurfaceFrame(srf, parameter)
+    direction = rs.CurveTangent(crv, 0)
+    newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
+    frame = sweepSec(crv, newplane, vec1)
+    if crv: rs.DeleteObjects(crv)
+    return frame
+
+def framemulti(srfs):
+    rs.EnableRedraw(False)
+    frames = []
+    for srf in srfs:
+        frames.append(isoframe(srf, 0, intervalx, vec2))
+        frames.append(isoframe(srf, 1, intervaly, vec2))
+        frames.append(extframe(srf))
+    rs.EnableRedraw(True)
+    return frames
     
+if __name__ == '__main__':
+    framemulti(obj)
 
-point = rs.GetPointOnSurface(obj, "Select location for extraction")
-parameter = rs.SurfaceClosestPoint(obj, point)
-rs.ExtractIsoCurve( obj, parameter, 2 )
-
-object_ids = rs.GetObjects("Select objects to delete")
-if object_ids: rs.DeleteObjects(object_ids)
-
-
-
-
-import rhinoscriptsyntax as rs
-plane = rs.WorldXYPlane()
-plane = rs.RotatePlane(plane, 45.0, [0,0,1])
-planept = rs.EvaluatePlane(plane, (0,0))
-rect = rs.AddRectangle( plane, 5.0, 15.0 )
-cen = rs.CurveAreaCentroid(rect)
-vec = planept - cen[0]
-rs.MoveObjects(rect, vec)
