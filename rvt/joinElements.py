@@ -1,24 +1,39 @@
-# from gtalarico AU17
 import clr
-# Import RevitAPI Classes
-clr.AddReference("RevitAPI")
+
+clr.AddReference('RevitAPI')
 from Autodesk.Revit.DB import *
-# As explained in the previous section, replace * with the class you need separatedby comma.
-clr.AddReference("RevitNodes")
+from Autodesk.Revit.DB.Structure import *
+
+clr.AddReference('RevitAPIUI')
+from Autodesk.Revit.UI import *
+
+clr.AddReference('System')
+from System.Collections.Generic import List
+
+clr.AddReference('RevitNodes')
 import Revit
-# Adds ToDSType (bool) extension method to Wrapped elements
-clr.ImportExtensions(Revit.Elements)
-# Adds ToProtoType, ToRevitType geometry conversion extension methods to objects
 clr.ImportExtensions(Revit.GeometryConversion)
-# Import DocumentManager and TransactionManager
-clr.AddReference("RevitServices")
-from RevitServices.Transactions import TransactionManager
+clr.ImportExtensions(Revit.Elements)
+
+clr.AddReference('RevitServices')
+import RevitServices
 from RevitServices.Persistence import DocumentManager
-# Create variable for Revit Document
+from RevitServices.Transactions import TransactionManager
+
 doc = DocumentManager.Instance.CurrentDBDocument
-# Start Transaction
+uidoc=DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument
+
+walls = UnwrapElement(IN[0])
+
 TransactionManager.Instance.EnsureInTransaction(doc)
-# Code that modifies Revit Database goes Here
-# End Transaction
+
+for x in walls:
+	for y in walls:
+		try:
+			JoinGeometryUtils.JoinGeometry(doc,x,y)
+		except:
+			pass
+
 TransactionManager.Instance.TransactionTaskDone()
-OUT = None
+
+OUT = walls
