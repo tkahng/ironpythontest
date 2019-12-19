@@ -18,7 +18,6 @@ def addRail(obj):
     vec = rs.CreateVector(0, 0, height)
     point2 = rs.CopyObject(point1, vec)
     line = rs.AddLine(point1, point2)
-    # if point1: rs.DeleteObjects(point1)
     if point2: rs.DeleteObjects(point2)
     return line
 
@@ -33,8 +32,10 @@ def makeWall(crvs, width):
             surfs =rs.ExplodePolysurfaces(shape)
             for surf in surfs:
                 shapes.append(surf)
+            if shape: rs.DeleteObjects(shape)
         else:
             shapes.append(shape)
+            
 
     for shape in shapes:
         railCurve = addRail(shape)
