@@ -1,4 +1,6 @@
 import rhinoscriptsyntax as rs
+
+# rs.EnableRedraw(False)
 faces = []
 bndry = []
 obj = rs.GetObject("Select polysurface to explode", rs.filter.polysurface)
@@ -20,7 +22,8 @@ for face in faces:
 
 for bnd in bndry:
     area = rs.SurfaceArea(bnd)[0]
-    print area
+    areapy = area/3.3058
+    print area, areapy
     txt = rs.ClipboardText(area)
 
 if faces: rs.DeleteObjects(faces)
