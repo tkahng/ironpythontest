@@ -3,7 +3,7 @@ import rhinoscriptsyntax as rs
 # rs.EnableRedraw(False)
 faces = []
 bndry = []
-obj = rs.GetObject("Select polysurface to explode", rs.filter.polysurface)
+obj = rs.GetObject("Select polysurface to explode", rs.filter.polysurface, True)
 if rs.IsPolysurface(obj):
     faces = rs.ExplodePolysurfaces( obj )
 
