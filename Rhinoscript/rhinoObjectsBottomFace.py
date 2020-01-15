@@ -1,17 +1,15 @@
 import rhinoscriptsyntax as rs
 
-# rs.EnableRedraw(False)
-
-objs = rs.GetObjects("Select polysurface to explode", rs.filter.polysurface, preselect=True)
-rs.UnselectObjects(objs)
+def inputFunc():
+    objs = rs.GetObjects("Select polysurface to explode", rs.filter.polysurface, preselect=True)
+    return objs
+    rs.UnselectObjects(objs)
 
 def bottomFaceBndry(obj):
     bndry = []
     # if rs.IsPolysurface(obj):
     #     faces = rs.ExplodePolysurfaces( obj )
-
     faces = rs.ExplodePolysurfaces(obj)
-
     for face in faces:
         if rs.IsSurface(face):
             domainU = rs.SurfaceDomain(face, 0)
@@ -31,24 +29,19 @@ def bottomFaceBndry(obj):
     return bndry
     print bndry
 
-bottomFaces = []
+def outputFunc(objs):
+    rs.EnableRedraw(False)
+    bottomFaces = []
+    for obj in objs:
+        resultFaces = bottomFaceBndry(obj)
+        for resultFace in resultFaces:
+            bottomFaces.append(resultFace)
+    rs.SelectObjects(bottomFaces)
+    rs.EnableRedraw(True)
 
-for obj in objs:
-    resultFaces = bottomFaceBndry(obj)
-    for resultFace in resultFaces:
-        bottomFaces.append(resultFace)
+def returnFaces():
+    objs = inputFunc()
+    outputFunc(objs)
 
-rs.SelectObjects(bottomFaces)
-
-# print bottomFaces
-
-
-    # for bnd in bndry:
-    #     area = rs.SurfaceArea(bnd)[0]
-    #     areapy = area/3.3058
-    #     print area, areapy
-    #     txt = rs.ClipboardText(area)
-
-    # return bndry
-
-# if faces: rs.DeleteObjects(faces)
+if __name__ == '__main__':
+    returnFaces()
