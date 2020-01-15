@@ -27,3 +27,14 @@ for bnd in bndry:
     txt = rs.ClipboardText(area)
 
 if faces: rs.DeleteObjects(faces)
+
+def calcArea(srfs):
+    areas = []
+    for srf in srfs:
+        areas.append(rs.SurfaceArea(srf)[0])
+    totalArea = sum(areas)
+    totalAreaPy = totalArea/3.3058
+    print area, areapy
+    txt = rs.ClipboardText(area)
+
+

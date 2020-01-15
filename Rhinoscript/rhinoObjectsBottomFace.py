@@ -3,7 +3,6 @@ import rhinoscriptsyntax as rs
 def inputFunc():
     objs = rs.GetObjects("Select polysurface to explode", rs.filter.polysurface, preselect=True)
     return objs
-    rs.UnselectObjects(objs)
 
 def bottomFaceBndry(obj):
     bndry = []
@@ -27,7 +26,16 @@ def bottomFaceBndry(obj):
         else:
             pass
     return bndry
-    print bndry
+    # print bndry
+
+def calcArea(srfs):
+    areas = []
+    for srf in srfs:
+        areas.append(rs.SurfaceArea(srf)[0])
+    totalArea = sum(areas)
+    totalAreaPy = totalArea/3.3058
+    print totalArea, totalAreaPy
+    txt = rs.ClipboardText(totalArea)
 
 def outputFunc(objs):
     rs.EnableRedraw(False)
@@ -38,10 +46,13 @@ def outputFunc(objs):
             bottomFaces.append(resultFace)
     rs.SelectObjects(bottomFaces)
     rs.EnableRedraw(True)
+    return bottomFaces
 
 def returnFaces():
     objs = inputFunc()
-    outputFunc(objs)
+    rs.UnselectAllObjects()
+    outputsrfs = outputFunc(objs)
+    calcArea(outputsrfs)
 
 if __name__ == '__main__':
     returnFaces()
