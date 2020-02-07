@@ -2,8 +2,8 @@ import rhinoscriptsyntax as rs
 
 obj = rs.GetObjects("Select a srf", rs.filter.surface)
 
-intervalx = rs.GetReal("intervalx", 1)
-intervaly = rs.GetReal("intervaly", 2)
+intervalx = rs.GetReal("intervalx", 2)
+intervaly = rs.GetReal("intervaly", 2.5)
 Secx = rs.GetReal("mullion width", 0.15) 
 Secy = rs.GetReal("mullion depth", 0.05) 
 
