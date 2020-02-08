@@ -1,4 +1,5 @@
 import rhinoscriptsyntax as rs
+# !-RunPythonScript "wallsFromCrvs.py"
 
 objs = rs.GetObjects("Pick curves to loft", rs.filter.curve)
 width = rs.GetReal("width", 0.4)

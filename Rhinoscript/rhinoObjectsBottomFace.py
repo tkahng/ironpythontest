@@ -1,4 +1,5 @@
 import rhinoscriptsyntax as rs
+# !-RunPythonScript "objectsBottomFace.py"
 
 def inputFunc():
     objs = rs.GetObjects("Select polysurface to explode", rs.filter.polysurface, preselect=True)

@@ -1,6 +1,12 @@
+# !-RunPythonScript "framesrf.py"
+
 import rhinoscriptsyntax as rs
 
 obj = rs.GetObjects("Select a srf", rs.filter.surface)
+
+if obj:
+    rs.SelectObjects(obj)
+    rs.Command("reparameterize a")
 
 intervalx = rs.GetReal("intervalx", 2)
 intervaly = rs.GetReal("intervaly", 2.5)
@@ -85,4 +91,3 @@ def framemulti(srfs):
     
 if __name__ == '__main__':
     framemulti(obj)
-

@@ -1,4 +1,5 @@
 import rhinoscriptsyntax as rs
+# !-RunPythonScript "objectBottomFaceArea.py"
 
 # rs.EnableRedraw(False)
 faces = []
