@@ -1,27 +1,33 @@
 # these commands get executed in the current scope
 # of each new shell (but not for canned commands)
-from Autodesk.Revit.DB import *
-from Autodesk.Revit.DB.Architecture import *
-from Autodesk.Revit.DB.Analysis import *
-from Autodesk.Revit.UI import *
-
+#pylint: disable=all
 import clr
-# clr.AddReferenceByName("PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")
-# clr.AddReferenceByName("PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")
 clr.AddReferenceByPartialName('PresentationCore')
 clr.AddReferenceByPartialName("PresentationFramework")
+clr.AddReferenceByPartialName('System')
 clr.AddReferenceByPartialName('System.Windows.Forms')
-import System.Windows
 
+from Autodesk.Revit import DB
+from Autodesk.Revit import UI
+
+# creates variables for selected elements in global scope
+# e1, e2, ...
+max_elements = 5
+gdict = globals()
 uidoc = __revit__.ActiveUIDocument
-doc = __revit__.ActiveUIDocument.Document
-selection = [ doc.GetElement( elId ) for elId in __revit__.ActiveUIDocument.Selection.GetElementIds() ]
+if uidoc:
+    doc = __revit__.ActiveUIDocument.Document
+    selection = [doc.GetElement(x) for x in uidoc.Selection.GetElementIds()]
+    for idx, el in enumerate(selection):
+        if idx < max_elements:
+            gdict['e{}'.format(idx+1)] = el
+        else:
+            break
 
+# alert function
 def alert(msg):
-	TaskDialog.Show('pyRevit', msg)
+    TaskDialog.Show('RPS', msg)
 
+# quit function
 def quit():
-	__window__.Close()
-
-if len(selection) > 0:
-	el = selection[0]
+    __window__.Close()
