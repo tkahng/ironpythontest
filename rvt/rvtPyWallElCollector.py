@@ -1,9 +1,9 @@
 # coding: utf8
 
-# from Autodesk.Revit import DB
-from pyrevit import revit, DB
+from Autodesk.Revit import DB
+# from pyrevit import revit, DB
 
-# doc = __revit__.ActiveUIDocument.Document
+doc = __revit__.ActiveUIDocument.Document
 # doc = revit.doc.ActiveUIDocument.Document
 
 # Creating collector instance and collecting all the walls from the model
@@ -16,6 +16,9 @@ wc = DB.FilteredElementCollector(revit.doc)\
                     .OfCategory(DB.BuiltInCategory.OST_Walls)\
                     .WhereElementIsNotElementType()\
                     .ToElements()
+
+wc = DB.FilteredElementCollector(doc).OfCategory(DB.BuiltInCategory.OST_Walls).WhereElementIsNotElementType().ToElements()
+wc = DB.FilteredElementCollector(doc).OfCategory(DB.BuiltInCategory.OST_Walls).WhereElementIsElementType().ToElements()
 
 # col = [x for x in wall_collector]
 
