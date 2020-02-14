@@ -4,7 +4,6 @@
     "python.autoComplete.extraPaths": [
         "D:\\GitHub\\ironpython-stubs\\release\\stubs.min", 
         "E:\\GitHub\\ironpython-stubs\\release\\stubs.min",
-        "C:\\Users\\인시공현장PC\\AppData\\Roaming\\pyRevit-Master\\pyrevitlib",
-        "C:\\Users\\Tchunoo\\AppData\\Roaming\\pyRevit-Master\\pyrevitlib"
+        "C:\\Users\\인시공현장PC\\AppData\\Roaming\\pyRevit-Master\\pyrevitlib"
     ]
 }

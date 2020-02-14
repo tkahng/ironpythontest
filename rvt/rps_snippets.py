@@ -15,3 +15,12 @@ cws = [w.Id for w in wc if w.WallType.Kind.ToString() == 'Curtain']
 uidoc.Selection.SetElementIds(List[DB.ElementId](cws))
 
 
+def get_walls():
+    """retrieve wall from selection set"""
+    return [x for x in revit.get_selection() if isinstance(x, DB.Wall)]
+
+
+def get_section_viewfamily():
+    return revit.doc.GetDefaultElementTypeId(
+        DB.ElementTypeGroup.ViewTypeSection
+        )
