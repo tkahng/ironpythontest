@@ -1,5 +1,5 @@
 # !-RunPythonScript "framesrf.py"
-
+# Surface must be Reparametrized with Auto option
 import rhinoscriptsyntax as rs
 
 obj = rs.GetObjects("Select a srf", rs.filter.surface)
