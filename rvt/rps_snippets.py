@@ -75,3 +75,19 @@ def cwrefs(cw):
                 refArray.Append(f.Reference)
     return refArray
 
+
+
+
+
+fValue = list(frange(0, fieldRowCount+1, fieldRowHeight))
+rValue = list(frange(0, rowCount, rowHeight))
+
+values = []
+
+for i in list(frange(0, rowCount, rowHeight)):
+	print list(frange(i, fieldRowCount+1, fieldRowHeight))
+	[values.append(j) for j in list(frange(i, fieldRowCount+1, fieldRowHeight))]
+	
+fValue = list(frange(fieldColWidth, colCount+1, colWidth))
+print fValue
+	
