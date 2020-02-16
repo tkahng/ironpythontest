@@ -91,3 +91,16 @@ for i in list(frange(0, rowCount, rowHeight)):
 fValue = list(frange(fieldColWidth, colCount+1, colWidth))
 print fValue
 	
+
+def mmToFoot(mm):
+    # Convert a given length in millimetres to feet.
+    inchToMm = 25.4
+    footToMm = 12 * inchToMm
+    return mm / footToMm
+
+def frange(start, count, step=1.0):
+    ''' "range()" like function which accept float type''' 
+    i = start
+    for c in range(count):
+        yield i
+        i += step
