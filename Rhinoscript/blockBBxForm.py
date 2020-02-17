@@ -1,12 +1,6 @@
 import rhinoscriptsyntax as rs
 
-# obj = rs.GetObjects("Select block to query")
-
-# def inputFunc():
-#     objs = rs.GetObjects("Select solids", rs.filter.polysurface, preselect=True)
-#     return objs
-
-walls = rs.GetObjects("Select solids", rs.filter.polysurface, preselect=True)
+# walls = rs.GetObjects("Select solids", rs.filter.polysurface, preselect=True)
 blks = rs.GetObjects("Select blocks", rs.filter.instance)
 
 def bbsolid(obj):
@@ -20,7 +14,6 @@ def bbsolid(obj):
             # if box:
             #     for i, point in enumerate(box):
             #         rs.AddTextDot( i, point )
-            
             xformscale = rs.XformScale((1.0,20.0,1.0))
             cob = rs.XformChangeBasis(rs.WorldXYPlane(), plane)
             cob_inverse = rs.XformChangeBasis(plane, rs.WorldXYPlane())
@@ -29,6 +22,14 @@ def bbsolid(obj):
             rs.TransformObjects(bb, xform)
             return bb
 
-solids = bbsolid(blks)
-print solids
-print walls
+if blks:
+    rs.EnableRedraw(False)
+    solids = [bbsolid(blk) for blk in blks]
+    if solids:
+        groupname = rs.AddGroup()
+        rs.AddObjectsToGroup(solids, groupname)
+        rs.SelectObjects(solids)
+    rs.EnableRedraw(True)
+
+# print solids
+# print walls
