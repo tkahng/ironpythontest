@@ -1,16 +1,21 @@
 import rhinoscriptsyntax as rs
 # !-RunPythonScript "wallsFromCrvs.py"
 
-objs = rs.GetObjects("Pick curves to loft", rs.filter.curve)
+objs = rs.GetObjects("Pick curves to loft", rs.filter.curve, preselect=True)
 width = rs.GetReal("width", 0.4)
 height = rs.GetReal("height", 3)
 plane = rs.ViewCPlane()
 
 def offsetBothCrvs(crvs, width):
+    if rs.IsCurveClosed(crvs):
+        domain = rs.CurveDomain(crvs)
+        parameter = (domain[0] + domain[1])/2.0
+        rs.CurveSeam( crvs, parameter )
     offsets = [] 
     offsets.append(rs.OffsetCurve( crvs, [0,0,0], width/2))
     offsets.append(rs.OffsetCurve( crvs, [0,0,0], -width/2))
     section = rs.AddLoftSrf(offsets,loft_type=2)
+
     if offsets: rs.DeleteObjects(offsets)
     return section
 
@@ -28,6 +33,7 @@ def makeWall(crvs, width):
     shapes = []
 
     for crv in crvs:
+        rs.SimplifyCurve(crv)
         shape = offsetBothCrvs(crv, width)
         if rs.IsPolysurface(shape):
             surfs =rs.ExplodePolysurfaces(shape)
@@ -47,7 +53,7 @@ def makeWall(crvs, width):
     rs.EnableRedraw(False)
     return breps
 
-makeWall(objs, width)
+rs.SelectObjects(makeWall(objs, width))
 
 
         
