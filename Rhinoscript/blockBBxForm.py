@@ -7,7 +7,7 @@ def bbsolid(obj):
     if rs.IsBlockInstance(obj):
         arrMatrix = rs.BlockInstanceXform(obj)
         if arrMatrix is not None:
-            pointId = rs.AddPoint([0,0,0])
+            # pointId = rs.AddPoint([0,0,0])
             plane = rs.PlaneTransform(rs.WorldXYPlane(), arrMatrix)
             box = rs.BoundingBox(obj, plane)
             bb = rs.AddBox(box)
