@@ -12,6 +12,21 @@ def calcArea(srfs):
     # txt = rs.ClipboardText(area)
     return totalArea
 
+# def srfunion(objs):
+#     joinedsrfs = rs.BooleanUnion(objs)
+#     print joinedsrfs
+#     borders = [rs.DuplicateSurfaceBorder(srf) for srf in joinedsrfs]
+#     print borders
+#     newsrfs = []
+#     for border in borders:
+#         if border and len(border)>1:
+#             cb = rs.CurveBooleanUnion(border)
+#             newsrfs.append(rs.AddPlanarSrf(cb))
+#             rs.DeleteObjects(cb)
+#         else:
+#             newsrfs.append(rs.AddPlanarSrf(border))
+#     return newsrfs
+
 def createCoverage(objs):
     plane = rs.WorldXYPlane()
     borders = [rs.DuplicateSurfaceBorder(obj) for obj in objs]
@@ -27,24 +42,21 @@ def createCoverage(objs):
     designCoverageArea = calcArea(result)
     return designCoverageArea
 
+def runTest():
+    sitearea = float(rs.GetDocumentUserText("site area"))
+    legalscr = float(rs.GetDocumentUserText("legal scr"))
+    legalfar = float(rs.GetDocumentUserText("legal far"))
+    designGFA = calcArea(objs)
+    designFAR = designGFA/sitearea
+    designCVA = createCoverage(objs)
+    designSCR = designCVA/sitearea
+    rs.SetDocumentUserText("design gfa", str(designGFA))
+    rs.SetDocumentUserText("design far", str(designFAR))
+    rs.SetDocumentUserText("design cva", str(designCVA))
+    rs.SetDocumentUserText("design scr", str(designSCR))
 
-sitearea = float(rs.GetDocumentUserText("site area"))
-legalscr = float(rs.GetDocumentUserText("legal scr"))
-legalfar = float(rs.GetDocumentUserText("legal far"))
-
-designGFA = calcArea(objs)
-designFAR = designGFA/sitearea
-designCVA = createCoverage(objs)
-designSCR = designCVA/sitearea
-
-
-
-rs.SetDocumentUserText("design gfa", str(designGFA))
-rs.SetDocumentUserText("design far", str(designFAR))
-rs.SetDocumentUserText("design cva", str(designCVA))
-rs.SetDocumentUserText("design scr", str(designSCR))
-
-
+runTest()
+# srfunion(objs)
 # def createFloorArea(objs):
 #     if objs and len(objs)>1: 
 #         floors = rs.BooleanUnion(objs)
