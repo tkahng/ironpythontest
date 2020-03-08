@@ -12,57 +12,74 @@ def calcArea(srfs):
     # txt = rs.ClipboardText(area)
     return totalArea
 
-# def testfar():
-
-sitearea = float(rs.GetDocumentUserText("site area"))
-legalscr = float(rs.GetDocumentUserText("legal scr"))
-legalfar = float(rs.GetDocumentUserText("legal far"))
-
-designgfa = calcArea(objs)
-designfar = designgfa/sitearea
-
-
-# print rs.DocumentDataCount()
-rs.SetDocumentUserText("design gfa", str(designgfa))
-rs.SetDocumentUserText("design far", str(designfar))
-
-# def getBorders(objs):
-#     crvs = []
-#     for obj in
-
 def createCoverage(objs):
     plane = rs.WorldXYPlane()
     borders = [rs.DuplicateSurfaceBorder(obj) for obj in objs]
     matrix = rs.XformPlanarProjection(plane)
     projcrvs = rs.TransformObjects(borders, matrix, copy=False)
     if projcrvs and len(projcrvs)>1:
-        result = rs.CurveBooleanUnion(projcrvs)
-        if result: rs.DeleteObjects(projcrvs)
-    return result
+        cb = rs.CurveBooleanUnion(projcrvs)
+        result = rs.AddPlanarSrf(cb)
+        rs.DeleteObjects(cb)
+    else:
+        result = rs.AddPlanarSrf(projcrvs)
+    if result: rs.DeleteObjects(projcrvs)
+    designCoverageArea = calcArea(result)
+    return designCoverageArea
 
-    # return borders
+
+sitearea = float(rs.GetDocumentUserText("site area"))
+legalscr = float(rs.GetDocumentUserText("legal scr"))
+legalfar = float(rs.GetDocumentUserText("legal far"))
+
+designGFA = calcArea(objs)
+designFAR = designGFA/sitearea
+designCVA = createCoverage(objs)
+designSCR = designCVA/sitearea
+
+
+
+rs.SetDocumentUserText("design gfa", str(designGFA))
+rs.SetDocumentUserText("design far", str(designFAR))
+rs.SetDocumentUserText("design cva", str(designCVA))
+rs.SetDocumentUserText("design scr", str(designSCR))
+
+
+# def createFloorArea(objs):
+#     if objs and len(objs)>1: 
+#         floors = rs.BooleanUnion(objs)
+#         rs.SelectObjects(floors)
+#         rs.Command("-_MergeAllFaces")
+#         rs.UnselectObjects(floors)
+#     else:
+#         floors = objs
+#     gfa = calcArea(floors)
+#     return floors, gfa
 
 # def createCoverage(objs):
 #     plane = rs.WorldXYPlane()
-#     # borders = [rs.DuplicateSurfaceBorder(obj) for obj in objs]
+#     borders = [rs.DuplicateSurfaceBorder(obj) for obj in objs]
 #     matrix = rs.XformPlanarProjection(plane)
-#     # projsrfs = rs.TransformObjects(objs, matrix, copy=False)
-#     projsrfs = rs.BooleanUnion(rs.TransformObjects(objs, matrix, copy=False), delete_input=True)
-#     rs.SelectObjects(projsrfs)
-#     rs.Command("reparameterize a")
-#     # if projcrvs and len(projcrvs)>1:
-#     #     result = rs.CurveBooleanUnion(projcrvs)
-#     #     if result: rs.DeleteObjects(projcrvs)
-#     # return result
-
-#     # return borders
-
-createCoverage(objs)
-
-# print designfar
-# def testfar(sitearea, designgfa):
-#     if sitearea.type
-#     designfar = designgfa/sitearea
-    
+#     projcrvs = rs.TransformObjects(borders, matrix, copy=False)
+#     if projcrvs and len(projcrvs)>1:
+#         cb = rs.CurveBooleanUnion(projcrvs)
+#         result = rs.AddPlanarSrf(cb)
+#         rs.DeleteObjects(cb)
+#     else:
+#         result = rs.AddPlanarSrf(projcrvs)
+#     if result: rs.DeleteObjects(projcrvs)
+#     designCoverageArea = calcArea(result)
+#     return designCoverageArea
 
 
+# sitearea = float(rs.GetDocumentUserText("site area"))
+# legalscr = float(rs.GetDocumentUserText("legal scr"))
+# legalfar = float(rs.GetDocumentUserText("legal far"))
+
+# floors = createFloorArea(objs)
+
+
+# designGFA = floors[1]
+# designFAR = designGFA/sitearea
+# designCVA = createCoverage(floors[0])
+# designSCR = designCVA/sitearea
