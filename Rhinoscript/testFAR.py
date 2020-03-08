@@ -12,20 +12,24 @@ def calcArea(srfs):
     # txt = rs.ClipboardText(area)
     return totalArea
 
-# def srfunion(objs):
-#     joinedsrfs = rs.BooleanUnion(objs)
-#     print joinedsrfs
-#     borders = [rs.DuplicateSurfaceBorder(srf) for srf in joinedsrfs]
-#     print borders
-#     newsrfs = []
-#     for border in borders:
-#         if border and len(border)>1:
-#             cb = rs.CurveBooleanUnion(border)
-#             newsrfs.append(rs.AddPlanarSrf(cb))
-#             rs.DeleteObjects(cb)
-#         else:
-#             newsrfs.append(rs.AddPlanarSrf(border))
-#     return newsrfs
+def srfunion(objs):
+    joinedsrfs = rs.BooleanUnion(objs)
+    rs.SelectObjects(joinedsrfs)
+    rs.Command("-_MergeAllFaces")
+    rs.UnselectObjects(joinedsrfs)
+    return joinedsrfs
+    # print joinedsrfs
+    # borders = [rs.DuplicateSurfaceBorder(srf) for srf in joinedsrfs]
+    # print borders
+    # newsrfs = []
+    # for border in borders:
+    #     if border and len(border)>1:
+    #         cb = rs.CurveBooleanUnion(border)
+    #         newsrfs.append(rs.AddPlanarSrf(cb))
+    #         rs.DeleteObjects(cb)
+    #     else:
+    #         newsrfs.append(rs.AddPlanarSrf(border))
+    # return newsrfs
 
 def createCoverage(objs):
     plane = rs.WorldXYPlane()
@@ -56,7 +60,8 @@ def runTest():
     rs.SetDocumentUserText("design scr", str(designSCR))
 
 runTest()
-# srfunion(objs)
+# print srfunion(objs)
+
 # def createFloorArea(objs):
 #     if objs and len(objs)>1: 
 #         floors = rs.BooleanUnion(objs)
@@ -67,6 +72,21 @@ runTest()
 #         floors = objs
 #     gfa = calcArea(floors)
 #     return floors, gfa
+
+# def srfunion(objs):
+#     joinedsrfs = rs.BooleanUnion(objs)
+#     print joinedsrfs
+#     borders = [rs.DuplicateSurfaceBorder(srf) for srf in joinedsrfs]
+#     print borders
+#     newsrfs = []
+#     for border in borders:
+#         if border and len(border)>1:
+#             cb = rs.CurveBooleanUnion(border)
+#             newsrfs.append(rs.AddPlanarSrf(cb))
+#             rs.DeleteObjects(cb)
+#         else:
+#             newsrfs.append(rs.AddPlanarSrf(border))
+#     return newsrfs
 
 # def createCoverage(objs):
 #     plane = rs.WorldXYPlane()
