@@ -61,11 +61,29 @@ def startupUserText():
     for key in siteKeys:
         rs.SetDocumentUserText(key, " ")
 
+def startupValueCheck():
+    test = []
+    for key in siteKeys:
+        try:
+            float(rs.GetDocumentUserText("site area"))
+            test.append(True)
+        except:
+            test.append(False)
+    # print test
+    if False in test: 
+        return False
+    else: 
+        return True
+
+
+
 def checkUserText():
     keylist = rs.GetDocumentUserText()
     # print keylist
     if keylist is None: 
         startupUserText()
+    elif startupValueCheck()==False:
+        return
     else:
         runTest()
 
