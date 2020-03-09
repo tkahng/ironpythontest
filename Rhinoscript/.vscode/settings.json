@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Miniconda3\\envs\\clr\\python.exe",
+    "python.pythonPath": "C:\\Users\\Tchunoo\\Miniconda3\\envs\\clr\\python.exe",
     "python.linting.enabled": false,
     // python autocomplete extra path
     "python.autoComplete.extraPaths": [
@@ -16,6 +16,7 @@
     // enable new language server. THIS IS EXTREMELY IMPORTANT TO HAVE FAST AUTOCOMPLETE!!
     "python.jediEnabled": false,
 
+    "python.terminal.activateEnvInCurrentTerminal": true,
     // Enable/Disable rhinopython
     "RhinoPython.Enabled": true,
     // True if you want to reset script engine every time you send code, otherwise False
