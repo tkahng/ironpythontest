@@ -13,69 +13,60 @@ def calcArea(srfs):
     return totalArea
 
 def srfunion(objs):
-    joinedsrfs = rs.BooleanUnion(objs)
-    borders = [rs.DuplicateSurfaceBorder(joinedsrf) for joinedsrf in objs]
-    # rs.SelectObjects(joinedsrfs)
-    # rs.Command("-_MergeAllFaces")
-    # rs.UnselectObjects(joinedsrfs)
-    return joinedsrfs
-    # print joinedsrfs
-    # borders = [rs.DuplicateSurfaceBorder(srf) for srf in joinedsrfs]
-    # print borders
-    # newsrfs = []
-    # for border in borders:
-    #     if border and len(border)>1:
-    #         cb = rs.CurveBooleanUnion(border)
-    #         newsrfs.append(rs.AddPlanarSrf(cb))
-    #         rs.DeleteObjects(cb)
-    #     else:
-    #         newsrfs.append(rs.AddPlanarSrf(border))
-    # return newsrfs
+    srfs = []
+    for obj in objs:
+        if rs.IsPolysurface(obj):
+            faces = rs.ExplodePolysurfaces(obj)
+            [srfs.append(face) for face in faces]
+        else:
+            srfs.append(obj)
+
+    return rs.BooleanUnion(srfs)
 
 def createCoverage(objs):
+    rs.EnableRedraw(False)
+    objs = rs.CopyObjects(objs)
     plane = rs.WorldXYPlane()
-    borders = [rs.DuplicateSurfaceBorder(obj) for obj in objs]
+    joinedsrfs = srfunion(objs)
+    designFloorArea = calcArea(joinedsrfs)
     matrix = rs.XformPlanarProjection(plane)
-    projcrvs = rs.TransformObjects(borders, matrix, copy=False)
+    projcrvs = rs.TransformObjects(joinedsrfs, matrix, copy=False)
     if projcrvs and len(projcrvs)>1:
-        cb = rs.CurveBooleanUnion(projcrvs)
-        result = rs.AddPlanarSrf(cb)
-        rs.DeleteObjects(cb)
+        result = srfunion(projcrvs)
     else:
-        result = rs.AddPlanarSrf(projcrvs)
+        result = projcrvs
     if result: rs.DeleteObjects(projcrvs)
     designCoverageArea = calcArea(result)
-    return designCoverageArea
+    rs.DeleteObjects(result)
+    rs.EnableRedraw(True)
+    return designCoverageArea, designFloorArea
 
 siteKeys = ("site area", "legal scr", "legal far")
 
 def runTest():
+    areas = createCoverage(objs)
     sitearea = float(rs.GetDocumentUserText("site area"))
     legalscr = float(rs.GetDocumentUserText("legal scr"))
     legalfar = float(rs.GetDocumentUserText("legal far"))
-    designGFA = calcArea(objs)
+    designGFA = areas[1]
     designFAR = designGFA/sitearea
-    designCVA = createCoverage(objs)
+    designCVA = areas[0]
     designSCR = designCVA/sitearea
     rs.SetDocumentUserText("design gfa", str(designGFA))
     rs.SetDocumentUserText("design far", str(designFAR))
     rs.SetDocumentUserText("design cva", str(designCVA))
     rs.SetDocumentUserText("design scr", str(designSCR))
 
+def startupUserText():
+    for key in siteKeys:
+        rs.SetDocumentUserText(key, " ")
 
 def checkUserText():
     keylist = rs.GetDocumentUserText()
-    ready = True
-    for siteKey in siteKeys:
-        if siteKey not in keylist:
-            ready == False
-            rs.SetDocumentUserText(siteKey, "default")
-        elif rs.GetDocumentUserText(siteKey) == "default":
-            ready == False
-
-    if ready == True:
+    # print keylist
+    if keylist is None: 
+        startupUserText()
+    else:
         runTest()
 
-# checkUserText()
-runTest()
-# print srfunion(objs)
+checkUserText()
