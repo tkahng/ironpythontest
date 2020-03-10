@@ -26,8 +26,14 @@ def groupByElevation(objs, isUG):
 
 def setLevel(sortedpairs, isUG):
     for idx, pairs in enumerate(sortedpairs, start=1):
-        if isUG: idx = -idx
-        func = lambda x: rs.SetUserText(x[0], "level", str(idx))
+        grade = 'AG'
+        if isUG: 
+            idx = -idx
+            grade = 'UG'
+        # func = lambda x: rs.SetUserText(x[0], "level", str(idx))
+        def func(x):
+            rs.SetUserText(x[0], "level", str(idx))
+            rs.SetUserText(x[0], "grade", grade)
         map(func, pairs)
 
 def process(objs, grade):
