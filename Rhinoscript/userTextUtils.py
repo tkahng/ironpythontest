@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+import rhinoscriptsyntax as rs 
+
+# objs = rs.GetObjects('select srfs', rs.filter.surface, preselect=True)
+
+def setSourceLayer(obj, source):
+    sourceLayer = rs.ObjectLayer(source)
+    rs.SetUserText(obj, 'source Layer', sourceLayer)
+
+def copySourceLayer(obj, source):
+    sourceLayer = rs.ObjectLayer(source)
+    rs.ObjectLayer(obj, sourceLayer)
+
+def getSourceKeys(source):
+    if rs.IsUserText(source) == 0:
+        print 'no keys'
+        return
+    return [ x for x in rs.GetUserText(source) if "BakeName" not in x ]
+
+def sourceKeyValue(source):
+    keys = getSourceKeys(source)
+    values = map(lambda x: rs.GetUserText(source, x), keys)
+    return keys, values
+
+def copySourceData(obj, source):
+    keyValue = sourceKeyValue(source)
+    print keyValue
+    map(lambda x, y: rs.SetUserText(obj, x, y), keyValue[0], keyValue[1])
+    
+# def srfExtrude(srfs):
+#     # for srf in srfs:
+#     rs.SelectObjects(srfs)
+#     rs.Command('_ExtrudeSrf _Pause')
+#     objs = rs.LastCreatedObjects()
+#     map(copySourceLayer, objs, srfs)
+#     map(copySourceData, objs, srfs)
+
+# srfExtrude(objs)

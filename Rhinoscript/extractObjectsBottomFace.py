@@ -7,6 +7,7 @@ def inputFunc():
 
 def bottomFaceBndry(obj):
     bndry = []
+    objLayer = rs.ObjectLayer(obj)
     # if rs.IsPolysurface(obj):
     #     faces = rs.ExplodePolysurfaces( obj )
     faces = rs.ExplodePolysurfaces(obj)
@@ -21,11 +22,15 @@ def bottomFaceBndry(obj):
             normal = rs.SurfaceNormal(face, param)
             # print normal
             if normal.Z == -1:
+                rs.ObjectLayer(face, objLayer)
+                rs.SetUserText(face, "tempTag", 1)
                 bndry.append(face)
             else:
                 rs.DeleteObject(face)
         else:
             pass
+    
+    # return map(lambda x: rs.ObjectLayer(x, objLayer), bndry)
     return bndry
     # print bndry
 
