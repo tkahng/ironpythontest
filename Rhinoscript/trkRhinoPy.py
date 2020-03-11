@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import rhinoscriptsyntax as rs 
 
-objs = rs.GetObjects('select srfs', rs.filter.surface, preselect=True)
-
 def setSourceLayer(obj, source):
     sourceLayer = rs.ObjectLayer(source)
     rs.SetUserText(obj, 'source Layer', sourceLayer)
@@ -35,8 +33,8 @@ def valuesFromLayer(obj):
     keys = layer.split()
     return keys
 
-def setValueByLayer(obj):
-    keys = 'usage function'
+def setValueByLayer(obj, keys):
+    # keys = 'usage function'
     keys = keys.split()
     values = valuesFromLayer(obj)
     map(lambda x,y: rs.SetUserText(obj, x, y), keys, values)
@@ -51,17 +49,3 @@ def boolToggle(input):
         return False
     else:
         return True
-    
-map(setValueByLayer, objs)
-map(setAreaValue, objs)
-
-    
-# def srfExtrude(srfs):
-#     # for srf in srfs:
-#     rs.SelectObjects(srfs)
-#     rs.Command('_ExtrudeSrf _Pause')
-#     objs = rs.LastCreatedObjects()
-#     map(copySourceLayer, objs, srfs)
-#     map(copySourceData, objs, srfs)
-
-# srfExtrude(objs)

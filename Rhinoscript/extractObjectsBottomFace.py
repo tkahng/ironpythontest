@@ -23,7 +23,7 @@ def bottomFaceBndry(obj):
             # print normal
             if normal.Z == -1:
                 rs.ObjectLayer(face, objLayer)
-                rs.SetUserText(face, "tempTag", 1)
+                # rs.SetUserText(face, "tempTag", 1)
                 bndry.append(face)
             else:
                 rs.DeleteObject(face)
@@ -51,6 +51,8 @@ def outputFunc(objs):
         for resultFace in resultFaces:
             bottomFaces.append(resultFace)
     rs.SelectObjects(bottomFaces)
+    group = rs.AddGroup()
+    rs.AddObjectsToGroup(bottomFaces, group)
     rs.EnableRedraw(True)
     return bottomFaces
 
