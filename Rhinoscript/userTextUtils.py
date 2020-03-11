@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import rhinoscriptsyntax as rs 
 
-# objs = rs.GetObjects('select srfs', rs.filter.surface, preselect=True)
+objs = rs.GetObjects('select srfs', rs.filter.surface, preselect=True)
 
 def setSourceLayer(obj, source):
     sourceLayer = rs.ObjectLayer(source)
@@ -26,6 +26,29 @@ def copySourceData(obj, source):
     keyValue = sourceKeyValue(source)
     print keyValue
     map(lambda x, y: rs.SetUserText(obj, x, y), keyValue[0], keyValue[1])
+
+def valuesFromLayer(obj):
+    layer = rs.ObjectLayer(obj)
+    if "::" in layer:
+        layer = layer.split("::")
+        layer = layer[1]
+    keys = layer.split()
+    return keys
+
+def setValueByLayer(obj):
+    keys = 'usage function'
+    keys = keys.split()
+    values = valuesFromLayer(obj)
+    map(lambda x,y: rs.SetUserText(obj, x, y), keys, values)
+
+def setAreaValue(obj):
+    area = rs.SurfaceArea(obj)[0]
+    area = round(area, 2)
+    rs.SetUserText(obj, 'area', str(area))
+    
+map(setValueByLayer, objs)
+map(setAreaValue, objs)
+
     
 # def srfExtrude(srfs):
 #     # for srf in srfs:
