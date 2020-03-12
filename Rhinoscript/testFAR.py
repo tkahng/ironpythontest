@@ -30,6 +30,7 @@ def createFloors(objs):
     # joinedsrfs = srfunion(objs)
     # print joinedsrfs
     joinedsrfs = rs.BooleanUnion(objs, delete_input=False)
+    print joinedsrfs
     designFloorArea = calcArea(joinedsrfs)
     # rs.EnableRedraw(True)
     if joinedsrfs: rs.DeleteObjects(joinedsrfs)
@@ -96,7 +97,7 @@ def startupValueCheck():
             test.append(True)
         except:
             test.append(False)
-    print test
+    # print test
     if False in test: 
         return False
     else: 
@@ -109,7 +110,7 @@ def startupUserTextCheck(usertextlist):
             test.append(False)
         else:
             test.append(True)
-    print test
+    # print test
     if False in test: 
         return False
     else: 

@@ -1,4 +1,5 @@
 import rhinoscriptsyntax as rs
+import trkRhinoPy as trp
 # !-RunPythonScript "objectsBottomFace.py"
 
 def inputFunc():

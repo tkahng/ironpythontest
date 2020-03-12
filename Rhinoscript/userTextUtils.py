@@ -65,3 +65,11 @@ map(setAreaValue, objs)
 #     map(copySourceData, objs, srfs)
 
 # srfExtrude(objs)
+
+# def swapParentLayer(obj, indx, newparent):
+#     layer = rs.ObjectLayer(obj)
+#     if "::" in layer:
+#         splitlayer = layer.split("::")
+#         return splitlayer[indx]
+#     else:
+#         return
