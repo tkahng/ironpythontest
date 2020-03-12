@@ -1,6 +1,6 @@
 import rhinoscriptsyntax as rs
 
-objs = rs.GetObjects('select srfs', rs.filter.surface, preselect=True)
+objs = rs.GetObjects('select objs', rs.filter.surface|rs.filter.curve, preselect=True)
 grade = rs.GetString("toggle grade")
 
 def setGrade(grade):

@@ -49,3 +49,19 @@ def boolToggle(input):
         return False
     else:
         return True
+
+def getBottomFace(obj):
+    faces = rs.ExplodePolysurfaces(obj)
+    output = []
+    [output.append(face) if getSrfNormal(face).Z == -1 else rs.DeleteObject(face) for face in faces]
+    return output
+
+def getSrfNormal(srf):
+    domainU = rs.SurfaceDomain(srf, 0)
+    domainV = rs.SurfaceDomain(srf, 1)
+    u = domainU[1]/2.0
+    v = domainV[1]/2.0
+    point = rs.EvaluateSurface(srf, u, v)
+    param = rs.SurfaceClosestPoint(srf, point)
+    return rs.SurfaceNormal(srf, param)
+        
