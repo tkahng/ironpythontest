@@ -25,6 +25,8 @@ def crvPointZ(crv):
     el = round(point.Z, 3)
     return [crv, el]
 
+
+
 def makePair(obj):
     if rs.IsCurve(obj):
         return crvPointZ(obj)
@@ -49,16 +51,34 @@ def setLevel(sortedpairs, isUG):
             idx = -idx
             grade = 'UG'
         # func = lambda x: rs.SetUserText(x[0], "level", str(idx))
-        def func(x):
-            rs.SetUserText(x[0], "level", str(idx))
-            rs.SetUserText(x[0], "grade", grade)
-        map(func, pairs)
+        # def func(x):
+        #     rs.SetUserText(x[0], "level", str(idx))
+        #     rs.SetUserText(x[0], "grade", grade)
+        #     rs.SetUserText(x[0], "elevation", str(x[1])) 
+        # def func(x):
+        #     keys = 'level grade elevation'
+        #     keys = keys.split()
+        #     vals = [idx, grade, str(x[1])]
+        #     lvldict = dict(zip(keys, vals))
+        #     rs.SetUserText(x[0], 'lvldict', lvldict)
+        # map(func, pairs)
+        map(lambda x: setLevelforDatum(x, idx, grade), pairs)
 
-    
+
+
+def setLevelforObj(x, idx):
+    rs.SetUserText(x[0], "level", str(idx))
+    rs.SetUserText(x[0], "grade", grade)    
+
+def setLevelforDatum(x, idx, grade):
+    rs.SetUserText(x[0], "level", str(idx))
+    rs.SetUserText(x[0], "grade", grade) 
+    rs.SetUserText(x[0], "elevation", str(x[1]))       
 
 def process(objs, grade):
     isUG = setGrade(grade)
     groups = groupByElevation(objs, isUG)
     setLevel(groups, isUG)
 
-process(objs, grade)
+if __name__ == '__main__':
+    process(objs, grade)  # Put the a call to the main function in the file.    
