@@ -65,3 +65,8 @@ def getSrfNormal(srf):
     param = rs.SurfaceClosestPoint(srf, point)
     return rs.SurfaceNormal(srf, param)
         
+
+def offsetInside(crv, dist):
+    rs.SimplifyCurve(crv)
+    centroid = rs.CurveAreaCentroid(crv)
+    return rs.OffsetCurve(crv, centroid[0], dist)

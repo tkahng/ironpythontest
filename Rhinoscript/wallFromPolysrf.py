@@ -33,7 +33,10 @@ def wallProfile(polySrf):
         return srf
 
 def addRail(obj):
-    point1 = rs.EvaluateSurface(obj, 0, 0)
+    if len(obj)>1:
+        obj = obj[0]
+        
+    point1 = rs.EvaluateSurface(obj, 1, 0)
     vec = rs.CreateVector(0, 0, height)
     point2 = rs.CopyObject(point1, vec)
     line = rs.AddLine(point1, point2)
