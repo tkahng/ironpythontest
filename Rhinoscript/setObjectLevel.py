@@ -1,6 +1,6 @@
 import rhinoscriptsyntax as rs
 
-objs = rs.GetObjects('select objs', rs.filter.surface|rs.filter.curve, preselect=True)
+objs = rs.GetObjects('select objs', rs.filter.surface|rs.filter.curve|rs.filter.point, preselect=True)
 grade = rs.GetString("toggle grade")
 
 def setGrade(grade):
@@ -28,8 +28,13 @@ def crvPointZ(crv):
 def makePair(obj):
     if rs.IsCurve(obj):
         return crvPointZ(obj)
-    else:
+    elif rs.IsSurface(obj):
         return srfPointZ(obj)
+    elif rs.IsPoint(obj):
+        pt = rs.CreatePoint(obj)
+        return [obj, round(pt.Z, 3)]
+    else:
+        pass
 
 def groupByElevation(objs, isUG):
     pairs = map(makePair, objs)
