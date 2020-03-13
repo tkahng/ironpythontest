@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import rhinoscriptsyntax as rs 
-import userTextUtils
+import trkRhinoPy as trp
 
 objs = rs.GetObjects('select srfs', rs.filter.surface, preselect=True)
 
@@ -10,8 +10,8 @@ def srfExtrude(srfs):
     rs.SelectObjects(srfs)
     rs.Command('_ExtrudeSrf _Pause')
     objs = rs.LastCreatedObjects()
-    map(userTextUtils.copySourceLayer, objs, srfs)
-    map(userTextUtils.copySourceData, objs, srfs)
+    map(trp.copySourceLayer, objs, srfs)
+    map(trp.copySourceData, objs, srfs)
     rs.EnableRedraw(True)
 
 srfExtrude(objs)
