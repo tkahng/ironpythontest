@@ -50,6 +50,7 @@ def boolToggle(input):
     else:
         return True
 
+
 def getBottomFace(obj):
     faces = rs.ExplodePolysurfaces(obj)
     output = []
