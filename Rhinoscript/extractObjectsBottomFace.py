@@ -21,8 +21,10 @@ def outputFunc(objs):
     bottomFaces = []
     for obj in objs:
         resultFaces = trp.getBottomFace(obj)
-        print resultFaces
+        
+        # print resultFaces
         for resultFace in resultFaces:
+            trp.copySourceLayer(resultFace, obj)
             bottomFaces.append(resultFace)
     rs.SelectObjects(bottomFaces)
     group = rs.AddGroup()

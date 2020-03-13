@@ -71,3 +71,10 @@ def offsetInside(crv, dist):
     rs.SimplifyCurve(crv)
     centroid = rs.CurveAreaCentroid(crv)
     return rs.OffsetCurve(crv, centroid[0], dist)
+
+def brepGetZ(obj):
+    box = rs.BoundingBox(obj)
+    minZ = box[0].Z
+    maxZ = box[-1].Z
+    height = maxZ - minZ
+    return round(height, 2)
