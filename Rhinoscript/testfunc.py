@@ -38,7 +38,7 @@ def setObjDict(obj):
     # vals = [idx, grade, str(x[1])]
     # objdict = dict(zip(objkeys, objvals))
     # rs.SetUserText(obj, 'objdict')
-    rs.SetUserText(obj, 'objdict', str(dict(zip(objkeys, objvals))))
+    rs.SetUserText(obj, 'objdict', dict(zip(objkeys, objvals)))
 
 docLvlDB = {}
 
