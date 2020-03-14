@@ -18,6 +18,7 @@ def objsGetQuickTag():
     tagVal = rs.GetString('Tag Value')
     rs.Command('_SelKeyValue tag {}'.format(tagVal))
 
+'''object user text utils'''
 
 def setSourceLayer(obj, source):
     sourceLayer = rs.ObjectLayer(source)
@@ -60,9 +61,30 @@ def setValueByLayer(obj, keys):
     map(lambda x,y: rs.SetUserText(obj, x, y), keys, values)
 
 def setSrfAreaValue(obj):
-    area = rs.SurfaceArea(obj)[0]
-    area = round(area, 2)
-    rs.SetUserText(obj, 'area', str(area))
+    area = calcArea(obj)
+    rs.SetUserText(obj, "area", str(area[0]))
+    rs.SetUserText(obj, "areapy", str(area[1]))
+
+def setBrepFA(obj):
+    faces = getBottomFace(obj)
+    area = calcArea(faces)
+    rs.SetUserText(obj, "area", str(area[0]))
+    rs.SetUserText(obj, "areapy", str(area[1]))
+    rs.DeleteObjects(faces)
+
+def setObjAreaValue(obj):
+    if rs.IsSurface(obj):
+        setSrfAreaValue(obj)
+    elif rs.IsPolysurface(obj) and rs.IsPolysurfaceClosed(obj):
+        setBrepFA(obj)
+    else:
+        pass
+
+def setBrepHeight(obj):
+    if rs.IsPolysurface(obj) and rs.IsPolysurfaceClosed(obj):
+        height = brepGetZ(obj)
+        height = height[2]
+        rs.SetUserText(obj, "height", str(height))
 
 def boolToggle(input):
     if len(input) == 0:
@@ -70,6 +92,16 @@ def boolToggle(input):
     else:
         return True
 
+"""Geo Utils """
+
+def calcArea(srfs):
+    areas = []
+    for srf in srfs:
+        areas.append(rs.SurfaceArea(srf)[0])
+    totalArea = round(sum(areas), 2)
+    totalAreaPy = round(totalArea/3.3058, 2)
+    return [totalArea, totalAreaPy]
+    # txt = rs.ClipboardText(totalArea)
 
 def rebuildSrfCrv(obj):
     crv = rs.DuplicateSurfaceBorder(obj, type=0)

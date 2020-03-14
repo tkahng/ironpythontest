@@ -3,7 +3,7 @@
 import rhinoscriptsyntax as rs
 import trkRhinoPy as trp
 
-obj = rs.GetObjects("Select a srf", rs.filter.surface, preselect=True)
+objs = rs.GetObjects("Select a srf", rs.filter.surface, preselect=True)
 eq = rs.GetString('eq?')
 eq = not trp.boolToggle(eq)
 
@@ -107,10 +107,9 @@ def frameFunc(srf, x, y, v1, v2):
 
 def framemulti(srfs):
     rs.EnableRedraw(False)
-    if obj:
-        rs.SelectObjects(obj)
-        rs.Command("reparameterize a")
-        rs.UnselectAllObjects()
+    rs.SelectObjects(srfs)
+    rs.Command("reparameterize a")
+    rs.UnselectAllObjects()
     frames = []
     allgroup = rs.AddGroup()
     for srf in srfs:
@@ -129,11 +128,14 @@ def framemulti(srfs):
         frame = list(reduce(lambda x, y: x+y, frame))
         rs.AddObjectsToGroup(frame,group)
         frames.append(frame)
-        print frame
-    for frame in frames: rs.SelectObjects(frame)
+        # print frame
+    # for frame in frames: rs.SelectObjects(frame)
+    frames = [x for x in frames if x]
+    frames = list(reduce(lambda x, y: x+y, frames))
     rs.AddObjectsToGroup(frames,allgroup)
+    rs.SelectObjects(frames)
     rs.EnableRedraw(True)
     return frames
     
 if __name__ == '__main__':
-    framemulti(obj)
+    framemulti(objs)
