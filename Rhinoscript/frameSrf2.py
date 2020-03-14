@@ -55,14 +55,16 @@ def Intervals(srf, uv, spacing, eq):
         i = i+dist
     return domains
 
-def seqIntervals(srf, uv, spacing):
-    domains = []
-    domain = rs.SurfaceDomain(srf, uv)
-    i = spacing
-    while i < domain[1]:
-        domains.append(i)
-        i = i+spacing
-    return domains
+def intervalEnds(srf, uv, spacing):
+    spacings = Intervals(srf, uv, spacing, eq)
+    ptlist = []
+    for i in spacings:
+        coord = []
+        coord.append(i)
+        coord.insert(intFlipBool(uv), 0)
+        ptlist.append(coord)   
+    return ptlist
+
 
 def intervalpts(srf, uv, spacing):
     spacings = Intervals(srf, uv, spacing, eq)
@@ -85,19 +87,58 @@ def isoframe(srf, uv, spacing, vec):
         direction = rs.CurveTangent(crv, 0)
         newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
         sweeps.append(sweepSec(crv, newplane, vec))
-    return sweeps    
+    return sweeps   
 
+def extframe2(srf, uv, spacing, vec):
+    points = intervalpts(srf, uv, spacing)
+    sweeps = []
+    for i in points:
+        point = rs.EvaluateSurface(srf, i[0], i[1])
+        parameter = rs.SurfaceClosestPoint(srf, point)
+        plane = rs.SurfaceFrame(srf, parameter)
+        crv = rs.ExtractIsoCurve(srf, parameter, intFlipBool(uv))
+        direction = rs.CurveTangent(crv, 0)
+        newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
+        sweeps.append(sweepSec(crv, newplane, vec))
+    return sweeps   
+
+# def railSweep(srf, crv, vec):
+#     point = rs.CurveStartPoint(crv)
+#     parameter = rs.SurfaceClosestPoint(srf, point)
+#     plane = rs.SurfaceFrame(srf, parameter)
+#     direction = rs.CurveTangent(crv, 0)
+#     newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
+#     frame = sweepSec(crv, newplane, vec)
+#     if crv: rs.DeleteObjects(crv)
+#     return frame
+
+# def extframe(srf, vec):
+#     # frames = []
+#     crv = rs.DuplicateSurfaceBorder(srf, type=1)
+#     rs.SimplifyCurve(crv)
+#     if rs.IsPolyCurve(crv):
+#         crvs = rs.ExplodeCurves(crv)
+#     elif rs.IsPolyline(crv):
+#         crvs = [crv]
+#     frames = map(lambda x: railSweep(srf, x, vec), crvs)
+#     return frames
 def extframe(srf, vec):
+    frames = []
     crv = rs.DuplicateSurfaceBorder(srf, type=1)
     rs.SimplifyCurve(crv)
+
+    domain = rs.CurveDomain(crv)
+    param = (domain[0] + domain[1])/2.0
+    rs.CurveSeam(crv, param)
+
     point = rs.EvaluateCurve(crv, 0)
     parameter = rs.SurfaceClosestPoint(srf, point)
     plane = rs.SurfaceFrame(srf, parameter)
     direction = rs.CurveTangent(crv, 0)
     newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
-    frame = sweepSec(crv, newplane, vec)
+    frame.append(sweepSec(crv, newplane, vec))
     if crv: rs.DeleteObjects(crv)
-    return [frame]
+    return frames
 
 def frameFunc(srf, x, y, v1, v2):
     vFrames = isoframe(srf, 0, x, v2)

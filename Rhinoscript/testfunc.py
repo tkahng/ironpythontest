@@ -16,7 +16,7 @@ schema = {
 'classvals' : 'rent na'
 }
 
-keylist = schema[skeys, svals]
+keylist = [schema['skeys'], schema['svals']]
 
 def createKVByVal(obj, skeys, svals, classkey, classvals):
     objsval = rs.GetUserText(obj, skeys)
@@ -48,10 +48,10 @@ def getObjDict(obj):
     docLvlDB[key] = objdict
 
 def func(x):
-    trp.setValueByLayer(x,keys)
+    trp.setValueByLayer(x,schema['keys'])
     trp.setBrepHeight(x)
     trp.setObjAreaValue(x)
-    createKVByVal(x, schema[skeys], schema[svals], schema[classkey], schema[classvals])
+    createKVByVal(x, schema['skeys'], schema['svals'], schema['classkey'], schema['classvals'])
     setObjDict(x)
     # trp.setSrfAreaValue(x)
 

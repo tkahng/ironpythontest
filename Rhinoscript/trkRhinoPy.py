@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import rhinoscriptsyntax as rs 
 
+def intFlipBool(tf):
+    return abs(tf-1)
+
 '''QuickTag'''
 
 def setQuickTag(obj, tagVal):
@@ -118,7 +121,7 @@ def rebuildBrep(obj):
     copySourceLayer(newbrep, obj)
     copySourceData(newbrep, obj)
     rs.DeleteObject(obj)
-    return newbrep
+    # return newbrep
 
 
 def getBottomFace(obj):
