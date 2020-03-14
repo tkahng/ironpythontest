@@ -201,6 +201,12 @@ def setLevel(sortedpairs, isUG, func):
             grade = 'UG'
         map(lambda x: func(x, idx, grade), pairs)
 
+# def setLvlHeight(sortedpairs):
+#     els = map(lambda x: x[1], sortedpairs)
+#     ptPairs = []
+#     for i in els:
+#         ptPairs
+
 def setDictforDatum(x, idx, grade):
     keys = 'level grade elevation'
     keys = keys.split()

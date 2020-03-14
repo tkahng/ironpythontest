@@ -69,21 +69,56 @@ def divCrv(srf, pts, uv, vec, eq):
     # rs.DeleteObject(domaincrv)
     return railcrv
 
+# def extCrv(srf, pts, uv, vec, eq):
+#     param = map(lambda x: rs.SurfaceClosestPoint(srf, x), pts)
+#     railcrv = map(lambda x: rs.ExtractIsoCurve( srf, x, trp.intFlipBool(uv)), param)
+#     frames = map(lambda x, y, z: sweepRail(srf, x, vec, y, z), railcrv, param, pts)
+#     # rs.DeleteObject(domaincrv)
+#     return railcrv
+
+# def getBorderCrvs(srf):
+#     crv = rs.DuplicateSurfaceBorder(srf, type=1)
+#     rs.SimplifyCurve(crv)
+#     oc = rs.OffsetCurveOnSurface( crv, srf, Secy/2 )
+#     rs.SimplifyCurve(oc)
+#     return rs.ExplodeCurves(oc)
+#     if oc: rs.DeleteObject(oc)
+#     if crv: rs.DeleteObject(crv)
+
+# def extframe(srf, vec):
+#     frames = []
+#     crv = rs.DuplicateSurfaceBorder(srf, type=1)
+#     rs.SimplifyCurve(crv)
+#     oc = rs.OffsetCurveOnSurface( crv, srf, Secy/2 )
+#     rs.SimplifyCurve(oc)
+#     crvs = rs.ExplodeCurves(oc)
+#     for c in crvs:
+#         point = rs.EvaluateCurve(c, 0)
+#         parameter = rs.SurfaceClosestPoint(srf, point)
+#         plane = rs.SurfaceFrame(srf, parameter)
+#         direction = rs.CurveTangent(c, 0)
+#         newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
+#         frames.append(sweepSec(c, newplane, vec))
+#     if oc: rs.DeleteObject(oc)
+#     if crv: rs.DeleteObject(crv)
+#     if crvs: rs.DeleteObjects(crvs)
+#     return frames
 
 def makeFrame(srf, dist, uv, vec, eq):
     pts = getDiv(srf, dist, uv, eq)
     # points = getEnds(srf, uv)
     divCrv(srf, pts, uv, vec, eq)
 
-def makeExt(srf, dist, uv, vec, eq):
-    # points = getDiv(srf, dist, uv, eq)
-    pts = getEnds(srf, uv)
-    divCrv(srf, pts, uv, vec, eq)
+# def makeExt(srf, dist, uv, vec, eq):
+#     # points = getDiv(srf, dist, uv, eq)
+#     pts = getEnds(srf, uv)
+#     divCrv(srf, pts, uv, vec, eq)
 
-map(lambda x: makeFrame(x, 3, 1, vec2, True), objs)
-map(lambda x: makeFrame(x, 3, 0, vec2, True), objs)
-map(lambda x: makeExt(x, 3, 1, vec1, True), objs)
-map(lambda x: makeExt(x, 3, 0, vec1, True), objs)
+map(lambda x: makeFrame(x, 1, 1, vec2, True), objs)
+map(lambda x: makeFrame(x, 1, 0, vec2, True), objs)
+# map(lambda x: extframe(x, vec2), objs)
+# map(lambda x: makeExt(x, 3, 1, vec1, True), objs)
+# map(lambda x: makeExt(x, 3, 0, vec1, True), objs)
 
 rs.EnableRedraw(True)
 
