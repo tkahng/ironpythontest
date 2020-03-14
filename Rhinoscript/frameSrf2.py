@@ -10,10 +10,10 @@ eq = not trp.boolToggle(eq)
 option = rs.GetInteger('option', number=3)
 
 if option == 2:
-    intervalx = rs.GetReal("intervalx", 2)
+    intervalx = rs.GetReal("intervalx", 0.5)
 else:
-    intervalx = rs.GetReal("intervalx", 2)
-    intervaly = rs.GetReal("intervaly", 2.5)
+    intervalx = rs.GetReal("intervalx", 1)
+    intervaly = rs.GetReal("intervaly", 2)
 Secx = rs.GetReal("mullion width", 0.15) 
 Secy = rs.GetReal("mullion depth", 0.05) 
 
@@ -32,7 +32,8 @@ def profileXform(sec, plane, vec):
 def sweepSec(crv, plane, vec):
     rect = profileXform(rectFrame(), plane, vec)
     sweep = rs.AddSweep1(crv, rect, closed=True)
-    sweep = rs.CapPlanarHoles(sweep)
+    # sweep = rs.CapPlanarHoles(sweep)
+    rs.CapPlanarHoles(sweep)
     if rect: rs.DeleteObjects(rect)
     if crv: rs.DeleteObjects(crv)
     return sweep
@@ -121,7 +122,7 @@ def framemulti(srfs):
         #     print f[0]
         # frame = [frame.append(x) for part in frame for x in part]
         # print rs.AddObjectsToGroup(frame, group)
-        # print len(frame)
+        print len(frame)
         # frames.extend(frame)
     # rs.SelectObjects(frames)
     rs.EnableRedraw(True)

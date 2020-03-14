@@ -10,4 +10,4 @@ def process(objs, grade, func):
     trp.setLevel(groups, isUG, func)
 
 if __name__ == '__main__':
-    process(objs, grade, trp.setDictforDatum())  # Put the a call to the main function in the file.    
+    process(objs, grade, trp.setDictforDatum)  # Put the a call to the main function in the file.    

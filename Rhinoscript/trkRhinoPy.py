@@ -1,6 +1,24 @@
 # -*- coding: utf-8 -*-
 import rhinoscriptsyntax as rs 
 
+'''QuickTag'''
+
+def setQuickTag(obj, tagVal):
+    rs.SetUserText(obj, 'tag', tagVal)
+
+def getQuickTag(tagVal):
+    rs.Command('_SelKeyValue tag {}'.format(tagVal))
+
+def objsSetQuickTag():
+    objs = rs.GetObjects('select objects to tag', preselect=True)
+    tagVal = rs.GetString('Tag Value')
+    map(lambda x: setQuickTag(x, tagVal), objs)
+
+def objsGetQuickTag():
+    tagVal = rs.GetString('Tag Value')
+    rs.Command('_SelKeyValue tag {}'.format(tagVal))
+
+
 def setSourceLayer(obj, source):
     sourceLayer = rs.ObjectLayer(source)
     rs.SetUserText(obj, 'source Layer', sourceLayer)
@@ -21,6 +39,8 @@ def sourceKeyValue(source):
     return keys, values
 
 def copySourceData(obj, source):
+    if rs.IsUserText(source) == 0:
+        return
     keyValue = sourceKeyValue(source)
     print keyValue
     map(lambda x, y: rs.SetUserText(obj, x, y), keyValue[0], keyValue[1])
@@ -39,7 +59,7 @@ def setValueByLayer(obj, keys):
     values = valuesFromLayer(obj)
     map(lambda x,y: rs.SetUserText(obj, x, y), keys, values)
 
-def setAreaValue(obj):
+def setSrfAreaValue(obj):
     area = rs.SurfaceArea(obj)[0]
     area = round(area, 2)
     rs.SetUserText(obj, 'area', str(area))
@@ -49,6 +69,24 @@ def boolToggle(input):
         return False
     else:
         return True
+
+
+def rebuildSrfCrv(obj):
+    crv = rs.DuplicateSurfaceBorder(obj, type=0)
+    rs.SimplifyCurve(crv)
+    return crv
+
+def rebuildBrep(obj):
+    srfs = rs.ExplodePolysurfaces(obj)
+    crvs = map(rebuildSrfCrv, srfs)
+    rs.DeleteObjects(srfs)
+    newSrfs = rs.AddPlanarSrf(crvs)
+    rs.DeleteObjects(crvs)
+    newbrep = rs.JoinSurfaces(newSrfs, delete_input=True)
+    copySourceLayer(newbrep, obj)
+    copySourceData(newbrep, obj)
+    rs.DeleteObject(obj)
+    return newbrep
 
 
 def getBottomFace(obj):
@@ -77,9 +115,13 @@ def brepGetZ(obj):
     minZ = box[0].Z
     maxZ = box[-1].Z
     height = maxZ - minZ
-    return round(height, 2)
+    return minZ, maxZ, round(height, 2)
 
 """Level Tools"""
+
+def brepPtZPair(brep):
+    el = round(brepGetZ(brep)[0], 3)
+    return [brep, el]
 
 def srfPtZPair(srf):
     domainU = rs.SurfaceDomain(srf, 0)
@@ -100,6 +142,8 @@ def crvPtZpair(crv):
 def setObjZPair(obj):
     if rs.IsCurve(obj):
         return crvPtZpair(obj)
+    elif rs.IsPolysurfaceClosed(obj):
+        return brepPtZPair(obj)
     elif rs.IsSurface(obj):
         return srfPtZPair(obj)
     elif rs.IsPoint(obj):
