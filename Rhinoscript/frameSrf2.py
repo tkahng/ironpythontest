@@ -36,7 +36,7 @@ def sweepSec(crv, plane, vec):
     rs.CapPlanarHoles(sweep)
     if rect: rs.DeleteObjects(rect)
     if crv: rs.DeleteObjects(crv)
-    return sweep
+    return sweep[0]
 
 def intFlipBool(tf):
     return abs(tf-1)
@@ -85,27 +85,34 @@ def isoframe(srf, uv, spacing, vec):
         direction = rs.CurveTangent(crv, 0)
         newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
         sweeps.append(sweepSec(crv, newplane, vec))
-    print sweeps
     return sweeps    
 
-def extframe(srf):
+def extframe(srf, vec):
     crv = rs.DuplicateSurfaceBorder(srf, type=1)
+    rs.SimplifyCurve(crv)
     point = rs.EvaluateCurve(crv, 0)
     parameter = rs.SurfaceClosestPoint(srf, point)
     plane = rs.SurfaceFrame(srf, parameter)
     direction = rs.CurveTangent(crv, 0)
     newplane = rs.PlaneFromNormal(point, direction, plane.ZAxis)
-    frame = sweepSec(crv, newplane, vec1)
+    frame = sweepSec(crv, newplane, vec)
     if crv: rs.DeleteObjects(crv)
-    print frame
-    return frame
+    return [frame]
+
+def frameFunc(srf, x, y, v1, v2):
+    vFrames = isoframe(srf, 0, x, v2)
+    hFrames = isoframe(srf, 1, x, v2)
+    xFrames = extframe(srf, v1)
+
 
 def framemulti(srfs):
     rs.EnableRedraw(False)
     if obj:
         rs.SelectObjects(obj)
         rs.Command("reparameterize a")
+        rs.UnselectAllObjects()
     frames = []
+    allgroup = rs.AddGroup()
     for srf in srfs:
         group = rs.AddGroup()
         frame = []
@@ -117,14 +124,14 @@ def framemulti(srfs):
         else:
             frame.append(isoframe(srf, 0, intervalx, vec2))
             frame.append(isoframe(srf, 1, intervaly, vec2))
-            frame.append(extframe(srf))
-        # for f in frame:
-        #     print f[0]
-        # frame = [frame.append(x) for part in frame for x in part]
-        # print rs.AddObjectsToGroup(frame, group)
-        print len(frame)
-        # frames.extend(frame)
-    # rs.SelectObjects(frames)
+            frame.append(extframe(srf, vec1))
+        frame = [x for x in frame if x]
+        frame = list(reduce(lambda x, y: x+y, frame))
+        rs.AddObjectsToGroup(frame,group)
+        frames.append(frame)
+        print frame
+    for frame in frames: rs.SelectObjects(frame)
+    rs.AddObjectsToGroup(frames,allgroup)
     rs.EnableRedraw(True)
     return frames
     
