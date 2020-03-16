@@ -57,6 +57,10 @@ def valuesFromLayer(obj):
     keys = layer.split()
     return keys
 
+def hatchFromSrf(srf):
+    border = rs.DuplicateSurfaceBorder(srf, type=0)
+    hatch = rs.AddHatches(border)
+
 def setValueByLayer(obj, keys):
     # keys = 'usage function'
     keys = keys.split()
