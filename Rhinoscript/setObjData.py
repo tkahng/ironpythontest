@@ -10,7 +10,7 @@ keys = 'usage function'
 def Func(x):
     # trp.valuesFromLayer(x)
     trp.setValueByLayer(x,keys)
-    trp.setSrfAreaValue(x)
+    # trp.setSrfAreaValue(x)
 
 def applyFunc(objs):
     map(Func, objs)
