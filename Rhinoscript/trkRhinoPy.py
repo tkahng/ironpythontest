@@ -59,7 +59,10 @@ def valuesFromLayer(obj):
 
 def hatchFromSrf(srf):
     border = rs.DuplicateSurfaceBorder(srf, type=0)
-    hatch = rs.AddHatches(border)
+    hatch = rs.AddHatches(border, "SOLID")
+    rs.DeleteObjects(border)
+    return hatch    
+
 
 def setValueByLayer(obj, keys):
     # keys = 'usage function'
@@ -155,6 +158,17 @@ def brepGetZ(obj):
     maxZ = box[-1].Z
     height = maxZ - minZ
     return minZ, maxZ, round(height, 2)
+
+def moveSrftoZ(srf):
+    domainU = rs.SurfaceDomain(srf, 0)
+    domainV = rs.SurfaceDomain(srf, 1)
+    u = domainU[1]/2.0
+    v = domainV[1]/2.0
+    point = rs.EvaluateSurface(srf, u, v)
+    # vec = [0, 0, point.Z]
+    # vec = rs.VectorReverse(vec)
+    # vec = [0,0,vec.Z]
+    rs.MoveObjects(srf, rs.VectorReverse([0, 0, point.Z]))
 
 """Level Tools"""
 
