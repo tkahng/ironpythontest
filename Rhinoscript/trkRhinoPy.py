@@ -63,6 +63,12 @@ def hatchFromSrf(srf):
     rs.DeleteObjects(border)
     return hatch    
 
+# def srfFromHatch(hatch):
+#     border = rs.DuplicateSurfaceBorder(srf, type=0)
+#     hatch = rs.AddHatches(border, "SOLID")
+#     rs.DeleteObjects(border)
+#     return hatch
+
 
 def setValueByLayer(obj, keys):
     # keys = 'usage function'
@@ -114,7 +120,7 @@ def calcArea(srfs):
     # txt = rs.ClipboardText(totalArea)
 
 def rebuildSrfCrv(obj):
-    crv = rs.DuplicateSurfaceBorder(obj, type=0)
+    crv = rs.DuplicateSurfaceBorder(obj, type=2)
     rs.SimplifyCurve(crv)
     return crv
 
@@ -125,11 +131,13 @@ def rebuildBrep(obj):
     newSrfs = rs.AddPlanarSrf(crvs)
     rs.DeleteObjects(crvs)
     newbrep = rs.JoinSurfaces(newSrfs, delete_input=True)
-    copySourceLayer(newbrep, obj)
-    copySourceData(newbrep, obj)
+    try:
+        copySourceLayer(newbrep, obj)
+        copySourceData(newbrep, obj)
+    except:
+        pass
     rs.DeleteObject(obj)
     # return newbrep
-
 
 def getBottomFace(obj):
     faces = rs.ExplodePolysurfaces(obj)
@@ -145,7 +153,6 @@ def getSrfNormal(srf):
     point = rs.EvaluateSurface(srf, u, v)
     param = rs.SurfaceClosestPoint(srf, point)
     return rs.SurfaceNormal(srf, param)
-        
 
 def offsetInside(crv, dist):
     rs.SimplifyCurve(crv)
