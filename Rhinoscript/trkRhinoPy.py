@@ -63,13 +63,6 @@ def hatchFromSrf(srf):
     rs.DeleteObjects(border)
     return hatch    
 
-# def srfFromHatch(hatch):
-#     border = rs.DuplicateSurfaceBorder(srf, type=0)
-#     hatch = rs.AddHatches(border, "SOLID")
-#     rs.DeleteObjects(border)
-#     return hatch
-
-
 def setValueByLayer(obj, keys):
     # keys = 'usage function'
     keys = keys.split()
@@ -120,15 +113,21 @@ def calcArea(srfs):
     # txt = rs.ClipboardText(totalArea)
 
 def rebuildSrfCrv(obj):
-    crv = rs.DuplicateSurfaceBorder(obj, type=2)
-    rs.SimplifyCurve(crv)
+    crv = rs.DuplicateSurfaceBorder(obj, type=0)
+    map(lambda x: rs.SimplifyCurve(x), crv)
     return crv
+
+# def rebuildSrfEdge(obj):
+#     crv = rs.DuplicateSurfaceBorder(obj, type=0)
+#     rs.SimplifyCurve(crv)
+#     return crv
 
 def rebuildBrep(obj):
     srfs = rs.ExplodePolysurfaces(obj)
     crvs = map(rebuildSrfCrv, srfs)
     rs.DeleteObjects(srfs)
-    newSrfs = rs.AddPlanarSrf(crvs)
+    newSrfs = map(rs.AddPlanarSrf, crvs)
+    # newSrfs = rs.AddPlanarSrf(crvs)
     rs.DeleteObjects(crvs)
     newbrep = rs.JoinSurfaces(newSrfs, delete_input=True)
     try:
@@ -220,10 +219,10 @@ def groupByElevation(objs, isUG):
 
 def setLevel(sortedpairs, isUG, func):
     for idx, pairs in enumerate(sortedpairs, start=1):
-        grade = 'AG'
+        grade = 'ag'
         if isUG: 
             idx = -idx
-            grade = 'UG'
+            grade = 'ug'
         map(lambda x: func(x, idx, grade), pairs)
 
 # def setLvlHeight(sortedpairs):

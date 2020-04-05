@@ -46,10 +46,10 @@ def groupByElevation(objs, isUG):
 
 def setLevel(sortedpairs, isUG):
     for idx, pairs in enumerate(sortedpairs, start=1):
-        grade = 'AG'
+        grade = 'ag'
         if isUG: 
             idx = -idx
-            grade = 'UG'
+            grade = 'ug'
         map(lambda x: setDictforDatum(x, idx, grade), pairs)
 
 def setDictforDatum(x, idx, grade):
